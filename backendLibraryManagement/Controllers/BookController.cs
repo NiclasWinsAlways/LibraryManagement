@@ -23,14 +23,14 @@ namespace backendLibraryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateBookDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
         {
-            var created = await _svc.CreateAsync(dto);
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+            var book = await _svc.CreateAsync(dto);
+            return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, UpdateBookDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
         {
             var ok = await _svc.UpdateAsync(id, dto);
             if (!ok) return NotFound();

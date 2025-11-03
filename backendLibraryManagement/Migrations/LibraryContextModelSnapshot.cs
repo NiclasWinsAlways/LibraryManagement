@@ -54,7 +54,7 @@ namespace backendLibraryManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.Loan", b =>
@@ -87,7 +87,7 @@ namespace backendLibraryManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Loans");
+                    b.ToTable("Loans", (string)null);
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.User", b =>
@@ -116,7 +116,7 @@ namespace backendLibraryManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.Loan", b =>

@@ -8,7 +8,7 @@ namespace backendLibraryManagement.Services
     public class BookService
     {
         private readonly LibraryContext _db;
-        public BookService(LibraryContext db)=>_db = db;
+        public BookService(LibraryContext db) => _db = db;
 
         //get all book from a list
         public async Task<List<BookDto>> GetAllAsync()
@@ -28,9 +28,9 @@ namespace backendLibraryManagement.Services
         }
 
         //get one book by id
-        public async Task<BookDto?>GetByIdAsync(int id)
+        public async Task<BookDto?> GetByIdAsync(int id)
         {
-            var b=await _db.Books.FindAsync(id);
+            var b = await _db.Books.FindAsync(id);
             if (b == null) return null;
             return new BookDto
             {
@@ -47,33 +47,36 @@ namespace backendLibraryManagement.Services
         //create book in system
         public async Task<BookDto> CreateAsync(CreateBookDto dto)
         {
-            var Book = new Book
+            var book = new Book
             {
                 Title = dto.Title,
                 Genre = dto.Genre,
                 Author = dto.Author,
                 ISBN = dto.ISBN,
-                IsAvailable = true,
-                //CopiesAvailable implemeten wen done wit other work
+                // default to one copy when DTO has no TotalCopies field
+                CopiesAvailable = 1,
+                IsAvailable = true
             };
-            _db.Books.Add(Book);
+
+            _db.Books.Add(book);
             await _db.SaveChangesAsync();
+
             return new BookDto
             {
-                Id = Book.Id,
-                Title = Book.Title,
-                Genre = Book.Genre,
-                Author = Book.Author,
-                ISBN = Book.ISBN,
-                IsAvailable = Book.IsAvailable,
-                CopiesAvailable = Book.CopiesAvailable,
+                Id = book.Id,
+                Title = book.Title,
+                Genre = book.Genre,
+                Author = book.Author,
+                ISBN = book.ISBN,
+                IsAvailable = book.IsAvailable,
+                CopiesAvailable = book.CopiesAvailable,
             };
         }
 
         //update book
-        public async Task<bool>UpdateAsync(int id, UpdateBookDto dto)
+        public async Task<bool> UpdateAsync(int id, UpdateBookDto dto)
         {
-            var book=await _db.Books.FindAsync(id);
+            var book = await _db.Books.FindAsync(id);
             if (book == null) return false;
             book.Title = dto.Title;
             book.Author = dto.Author;
@@ -84,9 +87,9 @@ namespace backendLibraryManagement.Services
         }
 
         //delete book
-        public async Task<bool>DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var Book=await _db.Books.FindAsync(id);
+            var Book = await _db.Books.FindAsync(id);
             if (Book == null) return false;
             _db.Books.Remove(Book);
             await _db.SaveChangesAsync();

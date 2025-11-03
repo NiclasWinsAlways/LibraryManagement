@@ -1,6 +1,9 @@
 using backendLibraryManagement.Data;
 using backendLibraryManagement.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,9 @@ var jwtKey = jwtSection["Key"];
 var jwtIssuer = jwtSection["Issuer"];
 var jwtAudience = jwtSection["Audience"];
 var jwtExpireMinutes = int.TryParse(jwtSection["ExpireMinutes"], out var m) ? m : 60;
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+    throw new InvalidOperationException("Jwt:Key is not configured in appsettings.json");
 
 // Register Authentication
 builder.Services.AddAuthentication(options =>
@@ -69,6 +75,7 @@ else
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LoanService>();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
@@ -81,6 +88,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+
+// Enable authentication before authorization
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
+
