@@ -11,7 +11,7 @@ namespace backendLibraryManagement.Controllers
         private readonly BookService _svc;
         public BookController(BookService svc) => _svc = svc;
 
-        [HttpGet]
+        [HttpGet("getbooks")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
         [HttpGet("{id:int}")]
@@ -22,7 +22,7 @@ namespace backendLibraryManagement.Controllers
             return Ok(book);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
         {
             var book = await _svc.CreateAsync(dto);

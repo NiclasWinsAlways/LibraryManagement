@@ -50,7 +50,7 @@ namespace backendLibraryManagement.Services
         {
             var book = await _db.Books.FindAsync(dto.BookId);
             if (book == null) return (false, "Book not found", null);
-            if (book.CopiesAvailable <= 0 || !book.IsAvailable) return (false, "Book not available", null);
+            if (book.CopiesAvailable <= 0 || !book.IsAvailable) return (false, "Book not available; consider reserving it", null);
 
             var user = await _db.Users.FindAsync(dto.UserId);
             if (user == null) return (false, "User not found", null);

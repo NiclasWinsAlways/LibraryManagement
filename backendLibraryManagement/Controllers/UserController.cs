@@ -13,7 +13,7 @@ namespace backendLibraryManagement.Controllers
         private readonly UserService _svc;
         public UserController(UserService svc) => _svc = svc;
 
-        [HttpGet]
+        [HttpGet("GetUsers")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
         [HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace backendLibraryManagement.Controllers
             return Ok(user);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
             var created = await _svc.CreateAsync(dto);

@@ -12,7 +12,7 @@ namespace backendLibraryManagement.Controllers
         public LoanController(LoanService svc) => _svc = svc;
 
         // GET: api/Loan
-        [HttpGet]
+        [HttpGet("getloans")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
         // GET: api/Loan/{id}
@@ -25,7 +25,7 @@ namespace backendLibraryManagement.Controllers
         }
 
         // POST: api/Loan
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLoanDto dto)
         {
             var (success, error, loan) = await _svc.CreateAsync(dto);
