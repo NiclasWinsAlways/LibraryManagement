@@ -88,21 +88,61 @@ namespace backendLibraryManagement.Services
 
         public async Task<bool> ReturnLoanAsync(int loanId)
         {
-            var loan = await _db.Loans.Include(l => l.Book).FirstOrDefaultAsync(l => l.Id == loanId);
+            var loan = await _db.Loans
+                .Include(l => l.Book)
+                .Include(l => l.User)
+                .FirstOrDefaultAsync(l => l.Id == loanId);
+
             if (loan == null) return false;
             if (loan.Status == "Afleveret") return false;
 
             loan.Status = "Afleveret";
             loan.EndDate = DateTime.UtcNow;
 
-            if (loan.Book != null)
-            {
-                loan.Book.CopiesAvailable += 1;
-                loan.Book.IsAvailable = loan.Book.CopiesAvailable > 0;
-            }
+            var book = loan.Book!;
+            book.CopiesAvailable++;
+            book.IsAvailable = book.CopiesAvailable > 0;
 
             await _db.SaveChangesAsync();
+
+            // ✅ Notify next user with reservation
+            var nextReservation = await _db.Reservations
+                .Where(r => r.BookId == book.Id && r.Status == "Active")
+                .OrderBy(r => r.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (nextReservation != null)
+            {
+                nextReservation.Status = "Fulfilled";
+                await _db.SaveChangesAsync();
+
+                var notifSvc = new NotificationService(_db);
+                await notifSvc.CreateAsync(nextReservation.UserId,
+                    $"The book '{book.Title}' you reserved is now available.");
+            }
+
             return true;
+        }
+        public async Task CheckDueLoansAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            var soonDue = await _db.Loans
+                .Include(l => l.Book)
+                .Where(l => l.Status == "Aktiv" &&
+                            l.EndDate <= now.AddDays(2) &&
+                            l.EndDate > now)
+                .ToListAsync();
+
+            var notifSvc = new NotificationService(_db);
+
+            foreach (var loan in soonDue)
+            {
+                await notifSvc.CreateAsync(
+                    loan.UserId,
+                    $"Reminder: Your loan for '{loan.Book!.Title}' is due on {loan.EndDate:yyyy-MM-dd}."
+                );
+            }
         }
     }
 }

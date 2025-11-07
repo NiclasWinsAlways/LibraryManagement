@@ -76,7 +76,8 @@ builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LoanService>();
 builder.Services.AddScoped<AuthService>();
-
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<NotificationService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

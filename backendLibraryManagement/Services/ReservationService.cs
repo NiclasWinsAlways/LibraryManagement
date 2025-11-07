@@ -69,6 +69,11 @@ namespace backendLibraryManagement.Services
 
             _db.Reservations.Add(reservation);
             await _db.SaveChangesAsync();
+            var notifsvc = new NotificationService(_db);
+            await notifsvc.CreateAsync(
+                user.Id,
+                $"You reserved '{book.Title}'. We will notify you when it's available for loan."
+                );
 
             var result = new ReservationDto
             {
