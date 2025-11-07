@@ -11,7 +11,7 @@ namespace backendLibraryManagement.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<Notifications Notifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

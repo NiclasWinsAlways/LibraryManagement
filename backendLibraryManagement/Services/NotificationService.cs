@@ -29,7 +29,7 @@ namespace backendLibraryManagement.Services
         {
             var n = await _db.Notifications.FindAsync(id);
             if(n!=null) return;
-            n.isRead=true;
+            n.IsRead = true;
             await _db.SaveChangesAsync();
         }
     }
