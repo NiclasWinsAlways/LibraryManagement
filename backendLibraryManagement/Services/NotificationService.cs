@@ -18,7 +18,7 @@ namespace backendLibraryManagement.Services
             _db.Notifications.Add(n);
             await  _db.SaveChangesAsync();
         }
-        public async Task<List<Notification>>GetUserNotificationsAsync(int userId)
+        public async Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
         {
             return await _db.Notifications
                 .Where(n=>n.UserId==userId)
