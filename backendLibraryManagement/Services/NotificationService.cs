@@ -1,4 +1,5 @@
 ﻿using backendLibraryManagement.Data;
+using backendLibraryManagement.Dto;
 using backendLibraryManagement.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +22,16 @@ namespace backendLibraryManagement.Services
         public async Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
         {
             return await _db.Notifications
-                .Where(n=>n.UserId==userId)
-                .OrderByDescending(n=>n.CreatedAt)
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.CreatedAt)
+                .Select(n => new NotificationDto
+                {
+                    Id = n.Id,
+                    UserId = n.UserId,
+                    Message = n.Message,
+                    CreatedAt = n.CreatedAt,
+                    IsRead = n.IsRead
+                })
                 .ToListAsync();
         }
         public async Task MarkAsReadAsync(int id)
