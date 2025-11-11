@@ -1,4 +1,5 @@
-﻿using backendLibraryManagement.Services;
+﻿using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
@@ -24,5 +25,28 @@ namespace backendLibraryManagement.Controllers
             await _svc.MarkAsReadAsync(id);
             return NoContent();
         }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateNotificationDto dto)
+        {
+            var (success, error) = await _svc.UpdateAsync(id, dto);
+            if (!success)
+            {
+                return error switch
+                {
+                    "NotFound" => NotFound(),
+                    _ => BadRequest(new { error })
+                };
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var ok = await _svc.DeleteAsync(id);
+            if (!ok) return NotFound();
+            return NoContent();
+        }
+
     }
 }

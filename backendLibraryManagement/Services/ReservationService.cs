@@ -98,5 +98,27 @@ namespace backendLibraryManagement.Services
             await _db.SaveChangesAsync();
             return true;
         }
+        public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateReservationDto dto)
+        {
+            var r = await _db.Reservations.FindAsync(id);
+            if (r == null) return (false, "NotFound");
+
+            if (!string.IsNullOrWhiteSpace(dto.Status))
+                r.Status = dto.Status.Trim();
+
+            await _db.SaveChangesAsync();
+            return (true, null);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var r = await _db.Reservations.FindAsync(id);
+            if (r == null) return false;
+
+            _db.Reservations.Remove(r);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

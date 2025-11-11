@@ -37,5 +37,28 @@ namespace backendLibraryManagement.Controllers
             if (!ok) return BadRequest(new { error = "Reservation not found or cannot be cancelled" });
             return NoContent();
         }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateReservationDto dto)
+        {
+            var (success, error) = await _svc.UpdateAsync(id, dto);
+            if (!success)
+            {
+                return error switch
+                {
+                    "NotFound" => NotFound(),
+                    _ => BadRequest(new { error })
+                };
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var ok = await _svc.DeleteAsync(id);
+            if (!ok) return NotFound();
+            return NoContent();
+        }
+
     }
 }

@@ -41,5 +41,30 @@ namespace backendLibraryManagement.Services
             n.IsRead = true;
             await _db.SaveChangesAsync();
         }
+        public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateNotificationDto dto)
+        {
+            var n = await _db.Notifications.FindAsync(id);
+            if (n == null) return (false, "NotFound");
+
+            if (dto.IsRead.HasValue)
+                n.IsRead = dto.IsRead.Value;
+
+            if (!string.IsNullOrWhiteSpace(dto.Message))
+                n.Message = dto.Message.Trim();
+
+            await _db.SaveChangesAsync();
+            return (true, null);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var n = await _db.Notifications.FindAsync(id);
+            if (n == null) return false;
+
+            _db.Notifications.Remove(n);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
