@@ -1,5 +1,6 @@
 ﻿using backendLibraryManagement.Data;
 using backendLibraryManagement.Dto;
+using backendLibraryManagement.Migrations;
 using backendLibraryManagement.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,12 @@ namespace backendLibraryManagement.Services
     public class ReservationService
     {
         private readonly LibraryContext _db;
-        public ReservationService(LibraryContext db) => _db = db;
+        private NotificationService _notification;
+        public ReservationService(LibraryContext db)
+        {
+            _db = db;
+            _notification = new NotificationService(db);
+        }
 
         public async Task<List<ReservationDto>> GetAllAsync()
         {
@@ -91,11 +97,22 @@ namespace backendLibraryManagement.Services
 
         public async Task<bool> CancelAsync(int id)
         {
-            var r = await _db.Reservations.FindAsync(id);
+            var r = await _db.Reservations
+                .Include(r => r.Book)
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.Id == id);
             if (r == null) return false;
             if (r.Status != "Active") return false;
             r.Status = "Cancelled";
             await _db.SaveChangesAsync();
+
+            // notify user their reservation was cancelled
+            if (r.UserId != 0)
+            {
+                var title = r.Book?.Title ?? "a book";
+                await _notification.CreateAsync(r.UserId, $"Your reservation for '{title}' has been cancelled.");
+            }
+
             return true;
         }
         public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateReservationDto dto)
@@ -103,10 +120,24 @@ namespace backendLibraryManagement.Services
             var r = await _db.Reservations.FindAsync(id);
             if (r == null) return (false, "NotFound");
 
+            var oldStatus = r.Status;
+
             if (!string.IsNullOrWhiteSpace(dto.Status))
                 r.Status = dto.Status.Trim();
 
             await _db.SaveChangesAsync();
+
+            // if reservation became Available, notify user
+            if (oldStatus != r.Status && r.Status == "Available")
+            {
+                var res = await _db.Reservations.Include(x => x.Book).FirstOrDefaultAsync(x => x.Id == id);
+                if (res != null)
+                {
+                    var title = res.Book?.Title ?? "a book";
+                    await _notification.CreateAsync(res.UserId, $"Your reservation for '{title}' is now available for loan.");
+                }
+            }
+
             return (true, null);
         }
 

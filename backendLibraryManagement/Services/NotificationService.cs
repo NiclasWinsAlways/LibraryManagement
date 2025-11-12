@@ -41,6 +41,23 @@ namespace backendLibraryManagement.Services
             n.IsRead = true;
             await _db.SaveChangesAsync();
         }
+        public async Task NotifyUpcomingDueDatesAsync()
+        {
+            var now = DateTime.UtcNow;
+            var from = now.AddDays(1);
+            var to = now.AddDays(2);
+
+            var loans = await _db.Loans
+                .Include(l => l.Book)
+                .Where(l => l.Status == "Aktiv" && l.EndDate >= from && l.EndDate <= to)
+                .ToListAsync();
+            foreach (var loan in loans)
+            {
+                var title = loan.Book?.Title ?? "a book";
+                var message = $"Reminder: your loan of '{title}' is due on {loan.EndDate:yyyy-MM-dd}. Please return or extend it.";
+                await CreateAsync(loan.UserId, message);
+            }
+        }
         public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateNotificationDto dto)
         {
             var n = await _db.Notifications.FindAsync(id);

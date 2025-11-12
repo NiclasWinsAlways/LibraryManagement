@@ -18,6 +18,17 @@ namespace backendLibraryManagement.Controllers
         {
             return Ok(await _svc.GetUserNotificationsAsync(userId));
         }
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] CreateNotificationDto dto)
+        {
+            if (dto == null) return BadRequest();
+            if (dto.UserId <= 0 || string.IsNullOrWhiteSpace(dto.Message))
+                return BadRequest(new { error = "UserId and Message are required" });
+
+            await _svc.CreateAsync(dto.UserId, dto.Message.Trim());
+            // Return the user's notification list location
+            return CreatedAtAction(nameof(GetForUser), new { userId = dto.UserId }, null);
+        }
 
         [HttpPost("{id:int}/read")]
         public async Task<IActionResult> MarkRead(int id)
