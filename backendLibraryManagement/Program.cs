@@ -12,11 +12,27 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<NotificationService>();
+builder.Services.Configure<ReminderOptions>(builder.Configuration.GetSection("Reminder"));
+builder.Services.AddHostedService<DueReminderWorker>();
+
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var jwtKey = jwtSection["Key"];
 var jwtIssuer = jwtSection["Issuer"];
 var jwtAudience = jwtSection["Audience"];
 var jwtExpireMinutes = int.TryParse(jwtSection["ExpireMinutes"], out var m) ? m : 60;
+
+//added this 
+builder.Services.AddSingleton(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>().GetSection("EmailSettings");
+    return new EmailService(
+        config["Host"],
+        int.Parse(config["Port"]),
+        config["From"],
+        config["Password"]
+    );
+});
 
 if (string.IsNullOrWhiteSpace(jwtKey))
     throw new InvalidOperationException("Jwt:Key is not configured in appsettings.json");

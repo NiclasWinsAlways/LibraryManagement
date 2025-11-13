@@ -8,7 +8,8 @@ namespace backendLibraryManagement.Services
     public class NotificationService
     {
         private readonly LibraryContext _db;
-        public NotificationService(LibraryContext db)=> _db = db;
+        private readonly EmailService _email;
+        public NotificationService(LibraryContext db,EmailService email)=> (_db,_email) = (db,email);
         public async Task CreateAsync(int userId, string message)
         {
             var n = new Notification
@@ -18,6 +19,17 @@ namespace backendLibraryManagement.Services
             };
             _db.Notifications.Add(n);
             await  _db.SaveChangesAsync();
+
+            //send email added this 
+            var user = await _db.Users.FindAsync(userId);
+            if(user!= null && !string.IsNullOrWhiteSpace(user.Email))
+            {
+                await _email.SendEmailAsync(
+                    to: user.Email,
+                    subject: "Library Notification",
+                    body: message
+                );
+            }
         }
         public async Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
         {
@@ -37,20 +49,25 @@ namespace backendLibraryManagement.Services
         public async Task MarkAsReadAsync(int id)
         {
             var n = await _db.Notifications.FindAsync(id);
-            if(n!=null) return;
+            if (n == null) return;
             n.IsRead = true;
             await _db.SaveChangesAsync();
         }
+
         public async Task NotifyUpcomingDueDatesAsync()
         {
             var now = DateTime.UtcNow;
-            var from = now.AddDays(1);
-            var to = now.AddDays(2);
+
+            var from = now;           // include today
+            var to = now.AddDays(2);  // include next 2 days
 
             var loans = await _db.Loans
                 .Include(l => l.Book)
-                .Where(l => l.Status == "Aktiv" && l.EndDate >= from && l.EndDate <= to)
+                .Where(l => l.Status == "Aktiv" &&
+                            l.EndDate.Date >= from &&
+                            l.EndDate.Date <= to)
                 .ToListAsync();
+
             foreach (var loan in loans)
             {
                 var title = loan.Book?.Title ?? "a book";

@@ -116,34 +116,32 @@
                 {
                     nextReservation.Status = "Fulfilled";
                     await _db.SaveChangesAsync();
-
-                    var notifSvc = new NotificationService(_db);
-                    await notifSvc.CreateAsync(nextReservation.UserId,
-                        $"The book '{book.Title}' you reserved is now available.");
-                }
-
+                    //added this 
+                    await _notification.CreateAsync(
+                        nextReservation.UserId,
+                        $"The book '{book.Title}' you reserved is now available for loan."
+                    );
+            }
                 return true;
             }
-            public async Task CheckDueLoansAsync()
+        public async Task CheckDueLoansAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            var soonDue = await _db.Loans
+                .Include(l => l.Book)
+                .Where(l => l.Status == "Aktiv" &&
+                            l.EndDate <= now.AddDays(2) &&
+                            l.EndDate > now)
+                .ToListAsync();
+            //added this 
+            foreach (var loan in soonDue)
             {
-                var now = DateTime.UtcNow;
-
-                var soonDue = await _db.Loans
-                    .Include(l => l.Book)
-                    .Where(l => l.Status == "Aktiv" &&
-                                l.EndDate <= now.AddDays(2) &&
-                                l.EndDate > now)
-                    .ToListAsync();
-
-                var notifSvc = new NotificationService(_db);
-
-                foreach (var loan in soonDue)
-                {
-                    await notifSvc.CreateAsync(
-                        loan.UserId,
-                        $"Reminder: Your loan for '{loan.Book!.Title}' is due on {loan.EndDate:yyyy-MM-dd}."
-                    );
-                }
+                await _notification.CreateAsync(
+                    loan.UserId,
+                    $"Reminder: Your loan for '{loan.Book!.Title}' is due on {loan.EndDate:yyyy-MM-dd}."
+                );
             }
         }
+    }
     }

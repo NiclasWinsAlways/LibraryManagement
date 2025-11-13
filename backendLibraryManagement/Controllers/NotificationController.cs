@@ -59,5 +59,11 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+        [HttpPost("run-due-scan")]
+        public async Task<IActionResult> RunDueScan()
+        {
+            await _svc.NotifyUpcomingDueDatesAsync();
+            return Ok(new { ok = true });
+        }
     }
 }

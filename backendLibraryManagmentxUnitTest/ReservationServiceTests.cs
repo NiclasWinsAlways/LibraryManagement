@@ -4,10 +4,8 @@ using backendLibraryManagement.Model;
 using backendLibraryManagement.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace backendLibraryManagmentxUnitTest
 {
@@ -21,6 +19,14 @@ namespace backendLibraryManagmentxUnitTest
                     .Options
             );
         }
+
+        // ✅ Helper to create fake NotificationService (no real emails)
+        private NotificationService GetNotificationService(LibraryContext db)
+        {
+            var fakeEmail = new EmailService("localhost", 25, "test@library.com", "fakepassword");
+            return new NotificationService(db, fakeEmail);
+        }
+
         [Fact]
         public async Task CreateAsync_Should_Fail_When_Book_Has_Available_Copies()
         {
@@ -28,12 +34,16 @@ namespace backendLibraryManagmentxUnitTest
             db.Books.Add(new Book { Id = 1, CopiesAvailable = 1, IsAvailable = true });
             db.Users.Add(new User { Id = 1 });
             await db.SaveChangesAsync();
-            var svc = new ReservationService(db);
+
+            var svc = new ReservationService(db, GetNotificationService(db)); // ✅ FIXED
             var dto = new CreateReservationDto { BookId = 1, UserId = 2 };
+
             var (success, error, _) = await svc.CreateAsync(dto);
+
             Assert.False(success);
             Assert.Equal("Book currently available — please loan instead", error);
         }
+
         [Fact]
         public async Task CreateAsync_Should_Create_When_No_Copies()
         {
@@ -41,13 +51,17 @@ namespace backendLibraryManagmentxUnitTest
             db.Books.Add(new Book { Id = 1, Title = "Bog", CopiesAvailable = 0, IsAvailable = false });
             db.Users.Add(new User { Id = 2, Name = "U" });
             await db.SaveChangesAsync();
-            var svc = new ReservationService(db);
+
+            var svc = new ReservationService(db, GetNotificationService(db)); // ✅ FIXED
             var dto = new CreateReservationDto { BookId = 1, UserId = 2 };
+
             var (ok, _, res) = await svc.CreateAsync(dto);
+
             Assert.True(ok);
             Assert.Equal(1, res.BookId);
             Assert.Equal(2, res.UserId);
         }
+
         [Fact]
         public async Task CancelAsync_Should_Set_Status_To_Cancelled()
         {
@@ -63,7 +77,8 @@ namespace backendLibraryManagmentxUnitTest
             await db.SaveChangesAsync();
             await db.Entry(res).ReloadAsync();
 
-            var svc = new ReservationService(db);
+            var svc = new ReservationService(db, GetNotificationService(db)); // ✅ FIXED
+
             var ok = await svc.CancelAsync(res.Id);
 
             Assert.True(ok);

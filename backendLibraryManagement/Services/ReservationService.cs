@@ -10,10 +10,10 @@ namespace backendLibraryManagement.Services
     {
         private readonly LibraryContext _db;
         private NotificationService _notification;
-        public ReservationService(LibraryContext db)
+        public ReservationService(LibraryContext db, NotificationService notification) //modified
         {
             _db = db;
-            _notification = new NotificationService(db);
+            _notification = notification;
         }
 
         public async Task<List<ReservationDto>> GetAllAsync()
@@ -75,11 +75,11 @@ namespace backendLibraryManagement.Services
 
             _db.Reservations.Add(reservation);
             await _db.SaveChangesAsync();
-            var notifsvc = new NotificationService(_db);
-            await notifsvc.CreateAsync(
-                user.Id,
-                $"You reserved '{book.Title}'. We will notify you when it's available for loan."
-                );
+            //replased old code with this awat
+            await _notification.CreateAsync(
+                 user.Id,
+                 $"You reserved '{book.Title}'. We will notify you when it's available for loan."
+             );
 
             var result = new ReservationDto
             {
