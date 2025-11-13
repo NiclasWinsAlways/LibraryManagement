@@ -1,0 +1,161 @@
+<div class="container admin-wrap">
+  <h1>Notifications</h1>
+  <p class="muted">
+    Create, send, and manage notifications. If the backend email/SMS endpoints exist,
+    messages are sent from the server; otherwise the UI falls back to Gmail/device SMS.
+  </p>
+
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <!-- Filter by user -->
+  <form class="toolbar" [formGroup]="filter">
+    <input type="number" placeholder="User ID…" formControlName="userId" />
+    <span class="muted">
+      {{ items.length ? (items.length + ' notifications') : 'Enter a user id' }}
+    </span>
+  </form>
+
+  <!-- Targets (no selector, just inputs) -->
+  <div class="card">
+    <div class="grid">
+      <label>
+        Email to
+        <input type="email" [(ngModel)]="userEmailInput" placeholder="user@example.com" />
+      </label>
+
+      <label>
+        Phone to
+        <input type="tel" [(ngModel)]="userPhoneInput" placeholder="4512345678" />
+      </label>
+
+      <p class="muted" style="align-self:end">
+        Uses backend routes if available; otherwise opens Gmail / device SMS.
+      </p>
+    </div>
+  </div>
+
+  <!-- Create -->
+  <div class="card">
+    <form class="grid" [formGroup]="createForm" (ngSubmit)="create()">
+      <label>
+        User ID
+        <input type="number" formControlName="UserId" required />
+      </label>
+      <label>
+        Message
+        <input type="text" formControlName="Message" required />
+      </label>
+      <div style="display:flex;align-items:end;gap:8px">
+        <button class="btn" type="submit" [disabled]="loading || createForm.invalid">
+          {{ loading ? 'Creating…' : 'Create notification' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Trigger server due-scan now -->
+  <div class="card">
+    <div class="grid">
+      <div>
+        <p class="muted">
+          Run the server due-scan now. It will create reminders for loans due today…+2 days
+          and send emails (server-side).
+        </p>
+        <small class="muted" *ngIf="lastScanMsg">{{ lastScanMsg }}</small>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn" type="button" (click)="runDueScanNow()" [disabled]="loading">
+          {{ loading ? 'Working…' : 'Run due-scan now' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend-only: Generate due reminders (0–3 days) -->
+  <div class="card">
+    <div class="grid">
+      <div>
+        <p class="muted">Generate reminders (0–3 days) for the user above (frontend only).</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn" type="button"
+                (click)="generateDueSoon()"
+                [disabled]="loading || !filter.get('userId')?.value">
+          {{ loading ? 'Working…' : 'Generate due reminders' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:5rem">ID</th>
+          <th>Message</th>
+          <th>Created</th>
+          <th>Status</th>
+          <th style="width:16rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="!loading && !items.length && filter.get('userId')?.value">
+          <td colspan="5" class="empty">No notifications.</td>
+        </tr>
+
+        <tr *ngFor="let n of items">
+          <td>#{{ n.id }}</td>
+          <td>{{ n.message }}</td>
+          <td>{{ n.createdAt }}</td>
+          <td>
+            <span class="badge" [class.good]="!n.isRead" [class.muted]="n.isRead">
+              {{ n.isRead ? 'Read' : 'Unread' }}
+            </span>
+          </td>
+          <td class="actions" style="display:flex;flex-wrap:wrap;gap:.4rem">
+            <button class="btn xs" (click)="startEdit(n)">Edit</button>
+            <button class="btn xs" (click)="markRead(n)" [disabled]="n.isRead">Mark read</button>
+
+            <!-- Only the two you want -->
+            <button class="btn xs secondary" (click)="sendEmail(n)">Send Email</button>
+            <button class="btn xs secondary" (click)="sendSms(n)">Send SMS</button>
+
+            <button class="btn xs danger" (click)="delete(n)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit drawer -->
+  <div class="drawer" *ngIf="editing as e">
+    <div class="drawer-inner">
+      <button type="button" class="drawer-close" (click)="cancelEdit()" aria-label="Close">✕</button>
+
+      <h3>Edit notification #{{ e.id }}</h3>
+      <p class="muted">User #{{ e.userId }}</p>
+
+      <form [formGroup]="editForm" (ngSubmit)="saveEdit()" (keydown.enter)="saveEdit()">
+        <div class="grid">
+          <label>
+            Message
+            <textarea formControlName="Message" rows="3"></textarea>
+          </label>
+
+          <label class="checkbox">
+            <input type="checkbox" formControlName="IsRead" />
+            Mark as read
+          </label>
+        </div>
+
+        <div class="drawer-actions">
+          <button class="btn" type="submit" [disabled]="loading">
+            {{ loading ? 'Saving…' : 'Save' }}
+          </button>
+          <button class="btn secondary" type="button" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

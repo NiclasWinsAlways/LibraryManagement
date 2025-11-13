@@ -1,0 +1,93 @@
+<div class="container admin-wrap">
+  <h1>Reservations</h1>
+  <p class="muted">View / edit / delete reservations.</p>
+
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <!-- Search -->
+  <div class="toolbar">
+    <input
+      placeholder="Search by id / user / book / status…"
+      [(ngModel)]="q"
+      (ngModelChange)="applyFilter()"
+    />
+    <span class="muted">{{ filtered.length }} results</span>
+  </div>
+
+  <!-- List -->
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:5rem">ID</th>
+          <th>User</th>
+          <th>Book</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th style="width:14rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filtered; trackBy: trackById">
+          <td>#{{ r.id }}</td>
+          <td>{{ r.userName || ('User ' + r.userId) }}</td>
+          <td>{{ r.bookTitle || ('Book ' + r.bookId) }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.createdAt }}</td>
+          <td class="actions">
+            <button class="btn xs" (click)="startEdit(r)">Edit</button>
+            <button class="btn xs danger" (click)="delete(r)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit drawer -->
+  <div class="drawer" *ngIf="editing as e">
+    <div class="drawer-inner">
+      <!-- Close button -->
+      <button
+        type="button"
+        class="drawer-close"
+        (click)="cancelEdit()"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+
+      <h3>Edit: #{{ e.id }}</h3>
+      <p class="muted">
+        {{ e.userName || ('User ' + e.userId) }}
+        →
+        {{ e.bookTitle || ('Book ' + e.bookId) }}
+      </p>
+
+      <form
+        [formGroup]="editForm"
+        (ngSubmit)="saveEdit()"
+        (keydown.enter)="editForm.valid && saveEdit()"
+      >
+        <div class="grid">
+          <label>
+            Status
+            <select formControlName="Status" required>
+              <option value="Active">Active</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="drawer-actions">
+          <button class="btn" type="submit" [disabled]="loading || editForm.invalid">
+            {{ loading ? 'Saving…' : 'Save' }}
+          </button>
+          <button class="btn secondary" type="button" (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

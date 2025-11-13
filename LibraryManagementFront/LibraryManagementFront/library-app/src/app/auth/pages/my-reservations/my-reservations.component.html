@@ -1,0 +1,40 @@
+<!-- src/app/auth/pages/my-reservations/my-reservations.component.html -->
+<div class="container">
+  <h1>My Reservations</h1>
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <div *ngIf="loading" class="muted">Loading…</div>
+
+  <div class="card" *ngIf="!loading">
+    <table class="table">
+      <thead>
+      <tr>
+        <th style="width:6rem">ID</th>
+        <th>Book</th>
+        <th>User</th>
+        <th style="width:10rem">Date</th>
+        <th style="width:10rem">Status</th>
+        <th style="width:10rem"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngIf="!items.length">
+        <td colspan="6" class="empty">No reservations.</td>
+      </tr>
+
+      <tr *ngFor="let r of items">
+        <td>{{ r.id }}</td>
+        <td>{{ r.bookTitle || ('#' + r.bookId) }}</td>
+        <td>{{ r.userName || ('#' + r.userId) }}</td>
+        <td>{{ displayDate(r) }}</td>
+        <td>
+          <span class="pill" [class.pill-ok]="r.status==='Active'">{{ r.status }}</span>
+        </td>
+        <td class="right">
+          <button class="btn xs danger" (click)="cancel(r)">Cancel</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to continue to LibraryApp.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <div class="row">
+        <label for="email">Email</label>
+        <input id="email" class="input" type="email" formControlName="email" />
+        <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Please enter a valid email.
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="password">Password</label>
+        <input id="password" class="input" type="password" formControlName="password" />
+        <div class="error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+          Minimum 6 characters.
+        </div>
+      </div>
+
+      <div class="actions">
+        <span>New here? <a class="link" routerLink="/auth/register">Create account</a></span>
+        <button class="btn primary" type="submit" [disabled]="form.invalid">Sign in</button>
+      </div>
+    </form>
+  </div>
+</div>

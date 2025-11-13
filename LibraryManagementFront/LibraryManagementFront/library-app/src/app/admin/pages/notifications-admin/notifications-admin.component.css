@@ -1,0 +1,53 @@
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.table .actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -2px 0 12px rgba(0,0,0,.12);
+  z-index: 50;
+}
+
+.drawer-inner {
+  padding: 16px 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drawer-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.grid textarea {
+  width: 100%;
+}
+
+.badge.good {
+  font-weight: 600;
+}
+
+.badge.muted {
+  opacity: 0.6;
+}

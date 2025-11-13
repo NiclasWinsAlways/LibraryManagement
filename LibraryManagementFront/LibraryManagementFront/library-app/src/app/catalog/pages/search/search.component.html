@@ -1,0 +1,106 @@
+<ng-container *ngIf="results$ | async as r">
+  <div class="container catalog-wrap">
+    <h1 class="page-title">Search Catalog</h1>
+
+    <form [formGroup]="form" class="grid">
+      <div class="row">
+        <label for="title">Title</label>
+        <input id="title" class="input" type="text" formControlName="title" placeholder="e.g., Dune" />
+      </div>
+
+      <div class="row">
+        <label for="author">Author</label>
+        <input id="author" class="input" type="text" formControlName="author" placeholder="e.g., Frank Herbert" />
+      </div>
+
+      <div class="row">
+        <label for="genre">Genre</label>
+        <input id="genre" class="input" type="text" formControlName="genre" placeholder="e.g., Sci-Fi" />
+      </div>
+
+      <div class="row">
+        <label for="isbn">ISBN</label>
+        <input id="isbn" class="input" type="text" formControlName="isbn" placeholder="e.g., 978-0441172719" />
+      </div>
+
+      <div class="row">
+        <label for="status">Status</label>
+        <select id="status" class="input" formControlName="status">
+          <option value="all">All</option>
+          <option value="available">Available</option>
+          <option value="borrowed">Borrowed</option>
+        </select>
+      </div>
+    </form>
+
+    <!-- Results -->
+    <div class="table-wrap">
+      <div class="meta">
+        <span>{{ $any(r).total }} results</span>
+        <div class="pager">
+          <button class="btn" type="button" (click)="changePage(-1)">Prev</button>
+          <span>Page {{ $any(r).page }}</span>
+          <button class="btn" type="button" (click)="changePage(1)">Next</button>
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:30%">Title</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>ISBN</th>
+            <th>Status</th>
+            <th class="right">Copies available</th>
+            <th class="right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="!$any(r).items?.length">
+            <td colspan="7" class="empty">No results yet. Try searching.</td>
+          </tr>
+
+          <tr *ngFor="let b of $any(r).items">
+            <td>{{ b.title }}</td>
+            <td>{{ b.author }}</td>
+            <td>{{ b.genre }}</td>
+            <td>{{ b.isbn }}</td>
+            <td>
+              <span
+                class="badge"
+                [class.good]="b.isAvailable"
+                [class.bad]="!b.isAvailable"
+              >
+                {{ b.isAvailable ? 'Available' : 'Borrowed' }}
+              </span>
+            </td>
+            <td class="right">
+              {{ b.copiesAvailable }}
+            </td>
+            <td class="right">
+              <!-- Show Loan when available -->
+              <button
+                class="btn tiny"
+                (click)="onLoan(b)"
+                *ngIf="b.isAvailable"
+              >
+                Loan
+              </button>
+
+              <!-- Show Reserve when borrowed -->
+              <button
+                class="btn tiny secondary"
+                (click)="onReserve(b)"
+                *ngIf="!b.isAvailable"
+                [disabled]="reserving.has(b.id)"
+              >
+                {{ reserving.has(b.id) ? 'Reserving…' : 'Reserve' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-container>

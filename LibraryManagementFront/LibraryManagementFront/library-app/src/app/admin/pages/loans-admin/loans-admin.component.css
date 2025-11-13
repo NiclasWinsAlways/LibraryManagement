@@ -1,0 +1,11 @@
+.admin-wrap { padding: 1rem; }
+.muted { opacity: .7; }
+.filters { display: flex; gap: .5rem; margin: .75rem 0 1rem; }
+.filters input, .filters select { padding: .5rem .6rem; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th, .tbl td { padding: .6rem .5rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+tr.overdue { background: rgba(255,0,0,.06); }
+.pill { padding: .15rem .5rem; border-radius: 999px; font-size: .85rem; background: rgba(255,255,255,.12); }
+.pill-overdue { background: rgba(255,0,0,.18); }
+.pill-returned { background: rgba(0,160,0,.18); }
+button { padding: .4rem .6rem; }

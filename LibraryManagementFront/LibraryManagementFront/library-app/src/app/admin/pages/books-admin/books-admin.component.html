@@ -1,0 +1,138 @@
+<div class="container admin-wrap">
+  <h1>Books</h1>
+  <p class="muted">View / update / delete books.</p>
+
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <!-- Create -->
+  <div class="card">
+    <h3>Create book</h3>
+    <form
+      [formGroup]="createForm"
+      (ngSubmit)="create()"
+      (keydown.enter)="createForm.valid && create()"
+    >
+      <div class="grid">
+        <label>
+          Title
+          <input formControlName="Title" required />
+          <small class="err" *ngIf="t('Title')?.touched && t('Title')?.invalid">
+            Title is required
+          </small>
+        </label>
+
+        <label>
+          Author
+          <input formControlName="Author" required />
+          <small class="err" *ngIf="t('Author')?.touched && t('Author')?.invalid">
+            Author is required
+          </small>
+        </label>
+
+        <label>Genre <input formControlName="Genre" /></label>
+        <label>ISBN <input formControlName="ISBN" /></label>
+
+        <label>
+          Copies
+          <input type="number" min="0" formControlName="CopiesAvailable" />
+          <small class="err"
+                 *ngIf="t('CopiesAvailable')?.touched && t('CopiesAvailable')?.invalid">
+            Must be 0 or more
+          </small>
+        </label>
+      </div>
+
+      <button class="btn" type="submit" [disabled]="loading || createForm.invalid">
+        {{ loading ? 'Creating…' : 'Create' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Search -->
+  <div class="toolbar">
+    <input
+      placeholder="Search by title/author/genre/isbn…"
+      [(ngModel)]="q"
+      (ngModelChange)="applyFilter()"
+    />
+    <span class="muted">{{ filtered.length }} results</span>
+  </div>
+
+  <!-- List -->
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:26rem">Title</th>
+          <th>Author</th>
+          <th>Genre</th>
+          <th>ISBN</th>
+          <th>Copies</th>
+          <th style="width:12rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of filtered; trackBy: trackById">
+          <td>{{ b.title }}</td>
+          <td>{{ b.author }}</td>
+          <td>{{ b.genre }}</td>
+          <td>{{ b.isbn }}</td>
+          <td>{{ b.copiesAvailable }}</td>
+          <td class="actions">
+            <button class="btn xs" (click)="startEdit(b)">Edit</button>
+            <button class="btn xs danger" (click)="delete(b)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit drawer -->
+  <div class="drawer" *ngIf="editing as e">
+    <div class="drawer-inner">
+      <h3>Edit: {{ e.title }}</h3>
+      <form
+        [formGroup]="editForm"
+        (ngSubmit)="saveEdit()
+        "
+        (keydown.enter)="editForm.valid && saveEdit()"
+      >
+        <div class="grid">
+          <label>
+            Title
+            <input formControlName="Title" required />
+            <small class="err" *ngIf="editForm.get('Title')?.touched && editForm.get('Title')?.invalid">
+              Title is required
+            </small>
+          </label>
+
+          <label>
+            Author
+            <input formControlName="Author" required />
+            <small class="err" *ngIf="editForm.get('Author')?.touched && editForm.get('Author')?.invalid">
+              Author is required
+            </small>
+          </label>
+
+          <label>Genre <input formControlName="Genre" /></label>
+          <label>ISBN <input formControlName="ISBN" /></label>
+
+          <label>
+            Copies
+            <input type="number" min="0" formControlName="CopiesAvailable" />
+            <small class="err"
+                   *ngIf="editForm.get('CopiesAvailable')?.touched && editForm.get('CopiesAvailable')?.invalid">
+              Must be 0 or more
+            </small>
+          </label>
+        </div>
+        <div class="drawer-actions">
+          <button class="btn" type="submit" [disabled]="loading || editForm.invalid">
+            {{ loading ? 'Saving…' : 'Save' }}
+          </button>
+          <button class="btn secondary" type="button" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

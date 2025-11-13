@@ -1,0 +1,47 @@
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.toolbar input {
+  flex: 1;
+}
+
+.table .actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+}
+
+.drawer-inner {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.drawer-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

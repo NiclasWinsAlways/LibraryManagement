@@ -1,0 +1,26 @@
+.toolbar { display:flex; gap:.75rem; align-items:center; margin:1rem 0; }
+.toolbar input { flex:1; }
+
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { padding:.6rem .8rem; border-bottom:1px solid rgba(255,255,255,.08); }
+.table thead th { text-align:left; opacity:.8; font-weight:600; }
+
+.actions { display:flex; gap:.5rem; justify-content:flex-end; }
+.btn.xs { padding:.25rem .6rem; font-size:.85rem; }
+.btn.danger { background:#b04; }
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .75rem;
+}
+.grid label { display:flex; flex-direction:column; gap:.25rem; }
+.grid input { padding:.5rem .6rem; border-radius:.5rem; border:1px solid rgba(255,255,255,.1); background:transparent; color:inherit; }
+
+.drawer {
+  position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; justify-content:flex-end;
+}
+.drawer-inner {
+  background:#0f172a; width:min(720px, 100%); padding:1rem; border-left:1px solid rgba(255,255,255,.08);
+}
+.drawer-actions { display:flex; gap:.5rem; margin-top:.75rem; }

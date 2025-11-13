@@ -1,0 +1,57 @@
+<div class="container admin-wrap">
+  <h1>Users</h1>
+  <p class="muted">
+    Promote user to Admin (uses /api/User/&#123;id&#125;).
+  </p>
+
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <div class="toolbar">
+    <input
+      placeholder="Search by name or email…"
+      [(ngModel)]="q"
+      (ngModelChange)="applyFilter()"
+    />
+    <span class="muted">{{ filtered.length }} results</span>
+  </div>
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="width:22rem">Name</th>
+          <th style="width:24rem">Email</th>
+          <th style="width:10rem">Role</th>
+          <th style="width:18rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filtered; trackBy: trackById">
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            <span class="pill" [class.pill-admin]="u.role === 'Admin'">
+              {{ u.role }}
+            </span>
+          </td>
+          <td class="actions">
+            <button
+              class="btn xs"
+              [disabled]="loading || u.role === 'Admin'"
+              (click)="setRole(u, 'Admin')"
+            >
+              Promote to Admin
+            </button>
+            <button
+              class="btn xs secondary"
+              [disabled]="loading || u.role === 'Member'"
+              (click)="setRole(u, 'Member')"
+            >
+              Demote to Member
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
