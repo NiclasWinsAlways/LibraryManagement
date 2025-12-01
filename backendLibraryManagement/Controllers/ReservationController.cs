@@ -11,9 +11,13 @@ namespace backendLibraryManagement.Controllers
         private readonly ReservationService _svc;
         public ReservationController(ReservationService svc) => _svc = svc;
 
+        // GET: api/Reservation/getReservations
+        // Returns all reservations.
         [HttpGet("getReservations")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
+        // GET: api/Reservation/{id}
+        // Returns a single reservation.
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -22,6 +26,8 @@ namespace backendLibraryManagement.Controllers
             return Ok(res);
         }
 
+        // POST: api/Reservation/create
+        // Creates a reservation for a book.
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateReservationDto dto)
         {
@@ -30,6 +36,8 @@ namespace backendLibraryManagement.Controllers
             return CreatedAtAction(nameof(Get), new { id = reservation!.Id }, reservation);
         }
 
+        // POST: api/Reservation/{id}/cancel
+        // Cancels a reservation if possible.
         [HttpPost("{id:int}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
@@ -37,6 +45,9 @@ namespace backendLibraryManagement.Controllers
             if (!ok) return BadRequest(new { error = "Reservation not found or cannot be cancelled" });
             return NoContent();
         }
+
+        // PUT: api/Reservation/{id}
+        // Updates a reservation.
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateReservationDto dto)
         {
@@ -52,6 +63,8 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Reservation/{id}
+        // Deletes a reservation entirely.
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

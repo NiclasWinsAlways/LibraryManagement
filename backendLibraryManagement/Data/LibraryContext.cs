@@ -5,8 +5,9 @@ namespace backendLibraryManagement.Data
 {
     public class LibraryContext : DbContext
     {
+        // Constructor modtager DbContext options fra DI (eks. connection string)
         public LibraryContext(DbContextOptions<LibraryContext> options) : base(options) { }
-
+        // DbSet repræsenterer tabellerne i databasen
         public DbSet<Book> Books { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Loan> Loans { get; set; }
@@ -15,34 +16,41 @@ namespace backendLibraryManagement.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // En Loan har én Book (FK BookId)
+            // LOAN RELATIONER
+            // En Loan har én Book, og én Book kan have mange Loans (historik)
             modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Book)
-                .WithMany() // En bog kan have mange lån over tid
-                .HasForeignKey(l => l.BookId)
-                .OnDelete(DeleteBehavior.Cascade); // Undgå cascade delete
+                .WithMany() // Book behøver ikke navigation tilbage (One-to-Many uden collection)
+                .HasForeignKey(l => l.BookId)  // FK i Loan-tabellen
+                .OnDelete(DeleteBehavior.Cascade);
+            // Cascade: Hvis en bog slettes, slettes dens loans (logisk i bibliotekssystem)
 
             // En Loan har én User, og en User kan have mange Loans
             modelBuilder.Entity<Loan>()
                 .HasOne(l => l.User)
-                .WithMany(u => u.Loans)
+                .WithMany(u => u.Loans) // Navigation: User.Loans
                 .HasForeignKey(l => l.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // Hvis en user slettes, slettes deres lån
 
-            // book kan have mange reservationer over tid
+            // RESERVATION RELATIONER
+            // En Reservation er knyttet til én Book, som kan have mange reservationer
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Book)
-                .WithMany()
+                .WithMany() // Book behøver ikke en liste af reservationer
                 .HasForeignKey(r => r.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // Hvis en Book slettes, slettes dens reservationer
 
-            //user kan have mange reservationer hvis du ønske
+            // En User kan have mange Reservationer (hvis ønsket)
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.User)
-                .WithMany()
+                .WithMany() // Kan udvides til User.Reservations
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // Hvis en User slettes, fjernes deres reservationer
 
+            // AFSLUT MODEL KONFIGURATION
             base.OnModelCreating(modelBuilder);
         }
     }

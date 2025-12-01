@@ -7,6 +7,7 @@ using System.Text;
 
 namespace backendLibraryManagement.Services
 {
+    // Handles user authentication and JWT token generation.
     public class AuthService
     {
         private readonly IConfiguration _config;
@@ -18,6 +19,8 @@ namespace backendLibraryManagement.Services
             _userService = userService;
         }
 
+        // Attempts to authenticate a user based on email + password.
+        // Returns Success=false if credentials are invalid.
         public async Task<(bool Success, string? Token, string? Error)> AuthenticateAsync(string email, string password)
         {
             var user = await _userService.GetUserByEmailAsync(email);
@@ -26,10 +29,12 @@ namespace backendLibraryManagement.Services
             var valid = await _userService.VerifyPasswordAsync(email, password);
             if (!valid) return (false, null, "Invalid credentials");
 
+            // Generate JWT so user can authenticate future API calls.
             var token = GenerateToken(user);
             return (true, token, null);
         }
 
+        // Generates a signed JWT token using configuration settings.
         public string GenerateToken(User user)
         {
             var jwtSection = _config.GetSection("Jwt");
@@ -38,6 +43,7 @@ namespace backendLibraryManagement.Services
             var audience = jwtSection["Audience"];
             var expireMinutes = int.TryParse(jwtSection["ExpireMinutes"], out var m) ? m : 60;
 
+            // Token expiration time
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -49,6 +55,7 @@ namespace backendLibraryManagement.Services
             var keyBytes = Encoding.UTF8.GetBytes(key);
             var creds = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256);
 
+            // Create token object
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
@@ -57,6 +64,7 @@ namespace backendLibraryManagement.Services
                 signingCredentials: creds
             );
 
+            // Convert token → string
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

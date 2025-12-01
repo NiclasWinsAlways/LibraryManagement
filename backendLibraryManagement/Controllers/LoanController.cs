@@ -11,11 +11,13 @@ namespace backendLibraryManagement.Controllers
         private readonly LoanService _svc;
         public LoanController(LoanService svc) => _svc = svc;
 
-        // GET: api/Loan
+        // GET: api/Loan/getloans
+        // Returns all active or historical loans.
         [HttpGet("getloans")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
         // GET: api/Loan/{id}
+        // Returns a specific loan by its ID.
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -24,7 +26,8 @@ namespace backendLibraryManagement.Controllers
             return Ok(loan);
         }
 
-        // POST: api/Loan
+        // POST: api/Loan/create
+        // Creates a new loan (borrows a book for a user).
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateLoanDto dto)
         {
@@ -34,6 +37,7 @@ namespace backendLibraryManagement.Controllers
         }
 
         // POST: api/Loan/{id}/return
+        // Marks a loan as returned.
         [HttpPost("{id:int}/return")]
         public async Task<IActionResult> Return(int id)
         {

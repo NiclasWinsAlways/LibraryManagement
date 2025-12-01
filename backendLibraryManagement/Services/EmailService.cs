@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 namespace backendLibraryManagement.Services
 {
+    // Simple SMTP-based email sender.
+    // Used primarily for notifications delivered to users.
     public class EmailService
     {
         private readonly string _host;
@@ -19,6 +21,7 @@ namespace backendLibraryManagement.Services
             _password = password;
         }
 
+        // Sends an HTML email asynchronously.
         public async Task SendEmailAsync(string to, string subject, string body)
         {
             var message = new MailMessage(_fromAddress, to, subject, body)
@@ -32,7 +35,7 @@ namespace backendLibraryManagement.Services
                 smtp.UseDefaultCredentials = false;
                 smtp.Credentials = new NetworkCredential(_fromAddress, _password);
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtp.Timeout = 20000; // 20 seconds
+                smtp.Timeout = 20000; // 20 seconds timeout
 
                 await smtp.SendMailAsync(message);
             }

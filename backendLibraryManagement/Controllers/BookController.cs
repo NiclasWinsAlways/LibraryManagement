@@ -11,9 +11,13 @@ namespace backendLibraryManagement.Controllers
         private readonly BookService _svc;
         public BookController(BookService svc) => _svc = svc;
 
+        // GET: api/Book/getbooks
+        // Returns all books in the system.
         [HttpGet("getbooks")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
+        // GET: api/Book/{id}
+        // Returns a single book by ID.
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -22,6 +26,8 @@ namespace backendLibraryManagement.Controllers
             return Ok(book);
         }
 
+        // POST: api/Book/create
+        // Creates a new book entry.
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
         {
@@ -29,6 +35,8 @@ namespace backendLibraryManagement.Controllers
             return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
         }
 
+        // PUT: api/Book/{id}
+        // Updates an existing book.
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateBookDto dto)
         {
@@ -37,6 +45,8 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Book/{id}
+        // Deletes a book by ID.
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -13,9 +13,13 @@ namespace backendLibraryManagement.Controllers
         private readonly UserService _svc;
         public UserController(UserService svc) => _svc = svc;
 
+        // GET: api/User/GetUsers
+        // Returns all registered users.
         [HttpGet("GetUsers")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
+        // GET: api/User/{id}
+        // Returns a specific user by ID.
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -24,20 +28,26 @@ namespace backendLibraryManagement.Controllers
             return Ok(user);
         }
 
+        // POST: api/User/create
+        // Creates a new user account.
         [HttpPost("create")]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
             var created = await _svc.CreateAsync(dto);
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
-        // Require authenticated user for updates. Role-change is still only applied when caller is in the "Admin" role.
+        // PUT: api/User/{id}
+        // Updates a user profile. Role changes require admin privileges.
         [Authorize]
         [HttpPut("{id:int}")]
         public async Task<IActionResult>Update(int id,UpdateUserDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            //if caller wants to chance role requre admin role
+
+            // Detect role change attempt.
             var wantsToChangeRole = !string.IsNullOrWhiteSpace(dto.Role);
+
+            // Require admin if role is being changed.
             if (wantsToChangeRole)
             {
                 //if not authenticated or not admin role, frobid role change

@@ -1,12 +1,12 @@
 ﻿namespace backendLibraryManagement.Dto
 {
+    // DTO used when updating user information.
+    // All fields are optional to allow partial updates.
     public class UpdateUserDto
     {
         public string? Name { get; set; }
         public string? Email { get; set; }
-        // Optional: when null/empty no password change
-        public string? Password { get;set; }
-        // Optional: only applied when caller is authorized to change
-        public string? Role { get;set; }
+        public string? Password { get;set; } // If null/empty: password is not changed.
+        public string? Role { get;set; } // Only applied if caller is authorized (e.g., admin).
     }
 }

@@ -2,6 +2,8 @@
 
 namespace backendLibraryManagement.Services
 {
+    // Background worker that runs once per day at a configured hour.
+    // Its job is to scan for loans that are due soon and create notifications for the users.
     public class DueReminderWorker: BackgroundService
     {
         private readonly ILogger<DueReminderWorker> _log;
@@ -18,6 +20,7 @@ namespace backendLibraryManagement.Services
             _opt = opt.Value;
         }
 
+        // Main background loop
         protected override async Task ExecuteAsync(CancellationToken Stoppingtoken)
         {
             if (!_opt.Enabled)
@@ -26,11 +29,14 @@ namespace backendLibraryManagement.Services
                 return;
             }
 
+            // Convert based on configured timezone.
             var tz = TimeZoneInfo.FindSystemTimeZoneById(_opt.Timezone);
             while (!Stoppingtoken.IsCancellationRequested)
             {
+                // Current local time
                 var nowLocal = TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz);
 
+                // Next run time (today at DailyHour, otherwise tomorrow)
                 var nextLocal = new DateTime(
                     nowLocal.Year, nowLocal.Month, nowLocal.Day,
                     _opt.DailyHour, 0, 0
@@ -39,6 +45,7 @@ namespace backendLibraryManagement.Services
                 if (nowLocal >= nextLocal)
                     nextLocal = nextLocal.AddDays(1);
 
+                // Calculate delay in UTC
                 var delay =TimeZoneInfo.ConvertTimeToUtc(nextLocal,tz) - DateTime.UtcNow;
                 if(delay<TimeSpan.FromMinutes(1))
                     delay=TimeSpan.FromMinutes(1);
@@ -47,6 +54,8 @@ namespace backendLibraryManagement.Services
                 try { await Task.Delay(delay, Stoppingtoken); } catch { }
 
                 if (Stoppingtoken.IsCancellationRequested) break;
+
+                // Run notification job inside scoped services
                 try
                 {
                     using var scope = _scopeFactory.CreateScope();

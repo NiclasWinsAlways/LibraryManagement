@@ -5,12 +5,14 @@
 
     namespace backendLibraryManagement.Services
     {
+    // Handles loan-related operations such as creating, returning, and scanning due loans.
         public class LoanService
         {
             private readonly LibraryContext _db;
         private readonly NotificationService _notification;
         public LoanService(LibraryContext db, NotificationService notification) => (_db,_notification) = (db, notification);
 
+             // Returns all loans with related user and book included.
             public async Task<List<LoanDto>> GetAllAsync()
             {
                 return await _db.Loans
@@ -30,6 +32,7 @@
                     }).ToListAsync();
             }
 
+              // Returns a single loan by ID.
             public async Task<LoanDto?> GetByIdAsync(int id)
             {
                 var l = await _db.Loans.Include(x => x.Book).Include(x => x.User).FirstOrDefaultAsync(x => x.Id == id);
@@ -46,16 +49,19 @@
                     Status = l.Status
                 };
             }
-
+            // Creates a new loan if user and book are valid and available.
             public async Task<(bool Success, string? Error, LoanDto? Loan)> CreateAsync(CreateLoanDto dto)
             {
                 var book = await _db.Books.FindAsync(dto.BookId);
                 if (book == null) return (false, "Book not found", null);
+
+                // Book must be physically available for loan
                 if (book.CopiesAvailable <= 0 || !book.IsAvailable) return (false, "Book not available; consider reserving it", null);
 
                 var user = await _db.Users.FindAsync(dto.UserId);
                 if (user == null) return (false, "User not found", null);
 
+                // Create loan
                 var loan = new Loan
                 {
                     BookId = dto.BookId,
@@ -65,7 +71,7 @@
                     Status = "Aktiv"
                 };
 
-                // Business rule: decrement available copies
+                // Reduce available copies
                 book.CopiesAvailable -= 1;
                 if (book.CopiesAvailable <= 0) book.IsAvailable = false;
 
@@ -87,6 +93,7 @@
                 return (true, null, result);
             }
 
+            // Returns a book and updates loan + available copies.
             public async Task<bool> ReturnLoanAsync(int loanId)
             {
                 var loan = await _db.Loans
@@ -106,7 +113,7 @@
 
                 await _db.SaveChangesAsync();
 
-                // ✅ Notify next user with reservation
+                // Notify next user in reservation queue
                 var nextReservation = await _db.Reservations
                     .Where(r => r.BookId == book.Id && r.Status == "Active")
                     .OrderBy(r => r.CreatedAt)
@@ -124,6 +131,7 @@
             }
                 return true;
             }
+        // Looks for loans that will expire soon and sends reminders.
         public async Task CheckDueLoansAsync()
         {
             var now = DateTime.UtcNow;

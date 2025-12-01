@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
+    // Handles book-related operations: creation, update, deletion, and queries.
     public class BookService
     {
         private readonly LibraryContext _db;
         public BookService(LibraryContext db) => _db = db;
 
-        //get all book from a list
+        // Returns all books projected into DTO form.
         public async Task<List<BookDto>> GetAllAsync()
         {
             return await _db.Books
@@ -27,7 +28,7 @@ namespace backendLibraryManagement.Services
                 }).ToListAsync();
         }
 
-        //get one book by id
+        // Returns a single book by ID.
         public async Task<BookDto?> GetByIdAsync(int id)
         {
             var b = await _db.Books.FindAsync(id);
@@ -44,7 +45,7 @@ namespace backendLibraryManagement.Services
             };
         }
 
-        //create book in system
+        // Creates a new book.
         public async Task<BookDto> CreateAsync(CreateBookDto dto)
         {
             var book = new Book
@@ -53,8 +54,7 @@ namespace backendLibraryManagement.Services
                 Genre = dto.Genre,
                 Author = dto.Author,
                 ISBN = dto.ISBN,
-                // default to one copy when DTO has no TotalCopies field
-                CopiesAvailable = 1,
+                CopiesAvailable = 1, // Default copy count
                 IsAvailable = true
             };
 
@@ -73,7 +73,7 @@ namespace backendLibraryManagement.Services
             };
         }
 
-        //update book
+        // Updates book details.
         public async Task<bool> UpdateAsync(int id, UpdateBookDto dto)
         {
             var book = await _db.Books.FindAsync(id);
@@ -86,7 +86,7 @@ namespace backendLibraryManagement.Services
             return true;
         }
 
-        //delete book
+        // Deletes a book permanently.
         public async Task<bool> DeleteAsync(int id)
         {
             var Book = await _db.Books.FindAsync(id);

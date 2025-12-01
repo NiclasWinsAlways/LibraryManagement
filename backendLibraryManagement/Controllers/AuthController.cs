@@ -12,6 +12,7 @@ namespace backendLibraryManagement.Controllers
         public AuthController(AuthService auth) => _auth = auth;
 
         // POST api/Auth/login
+        // Attempts to authenticate a user and return a JWT token if credentials are valid.
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {

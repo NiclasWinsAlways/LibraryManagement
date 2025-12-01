@@ -13,11 +13,17 @@ namespace backendLibraryManagement.Controllers
         {
             _svc = svc;
         }
+
+        // GET: api/Notification/user/{userId}
+        // Returns all notifications for a specific user.
         [HttpGet("user/{userId:int}")]
         public async Task<IActionResult> GetForUser(int userId)
         {
             return Ok(await _svc.GetUserNotificationsAsync(userId));
         }
+
+        // POST: api/Notification/create
+        // Creates a new notification for a user.
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateNotificationDto dto)
         {
@@ -30,12 +36,17 @@ namespace backendLibraryManagement.Controllers
             return CreatedAtAction(nameof(GetForUser), new { userId = dto.UserId }, null);
         }
 
+        // POST: api/Notification/{id}/read
+        // Marks a notification as read.
         [HttpPost("{id:int}/read")]
         public async Task<IActionResult> MarkRead(int id)
         {
             await _svc.MarkAsReadAsync(id);
             return NoContent();
         }
+
+        // PUT: api/Notification/{id}
+        // Updates an existing notification.
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateNotificationDto dto)
         {
@@ -51,6 +62,9 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+
+        // DELETE: api/Notification/{id}
+        // Deletes a notification.
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -59,6 +73,8 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+        // POST: api/Notification/run-due-scan
+        // Manually triggers a scan for upcoming due loans and sends notifications.
         [HttpPost("run-due-scan")]
         public async Task<IActionResult> RunDueScan()
         {

@@ -5,11 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
+    // Handles app-level notifications for users.
+    // Notifications are stored in the database and optionally emailed to the user.
     public class NotificationService
     {
         private readonly LibraryContext _db;
         private readonly EmailService _email;
         public NotificationService(LibraryContext db,EmailService email)=> (_db,_email) = (db,email);
+
+        // Creates a new notification and optionally sends an email to the user.
         public async Task CreateAsync(int userId, string message)
         {
             var n = new Notification
@@ -20,7 +24,7 @@ namespace backendLibraryManagement.Services
             _db.Notifications.Add(n);
             await  _db.SaveChangesAsync();
 
-            //send email added this 
+            // Send email version of notification, if user has an email. 
             var user = await _db.Users.FindAsync(userId);
             if(user!= null && !string.IsNullOrWhiteSpace(user.Email))
             {
@@ -31,6 +35,8 @@ namespace backendLibraryManagement.Services
                 );
             }
         }
+
+        // Returns all notifications for a user, newest first.
         public async Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
         {
             return await _db.Notifications
@@ -46,6 +52,8 @@ namespace backendLibraryManagement.Services
                 })
                 .ToListAsync();
         }
+
+        // Marks a notification as read.
         public async Task MarkAsReadAsync(int id)
         {
             var n = await _db.Notifications.FindAsync(id);
@@ -54,6 +62,8 @@ namespace backendLibraryManagement.Services
             await _db.SaveChangesAsync();
         }
 
+        // Scans for users with due loans within the next two days.
+        // Sends a reminder notification to each affected user.
         public async Task NotifyUpcomingDueDatesAsync()
         {
             var now = DateTime.UtcNow;
@@ -75,6 +85,8 @@ namespace backendLibraryManagement.Services
                 await CreateAsync(loan.UserId, message);
             }
         }
+
+        // Updates an existing notification.
         public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateNotificationDto dto)
         {
             var n = await _db.Notifications.FindAsync(id);
@@ -90,6 +102,7 @@ namespace backendLibraryManagement.Services
             return (true, null);
         }
 
+        // Deletes a notification.
         public async Task<bool> DeleteAsync(int id)
         {
             var n = await _db.Notifications.FindAsync(id);
