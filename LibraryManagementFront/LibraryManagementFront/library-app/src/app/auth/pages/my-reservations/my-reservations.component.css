@@ -1,0 +1,242 @@
+/* ---------- Layout ---------- */
+.container.resv-wrap {
+  max-width: 980px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.muted {
+  color: #6b7280; /* gray-500 */
+  font-size: 0.95rem;
+}
+
+/* ---------- Alerts ---------- */
+.alert {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  border: 1px solid transparent;
+}
+.alert.error {
+  background: #fef2f2;       /* red-50 */
+  color: #991b1b;            /* red-800 */
+  border-color: #fecaca;     /* red-200 */
+}
+.alert.info {
+  background: #eff6ff;       /* blue-50 */
+  color: #1e3a8a;            /* blue-900 */
+  border-color: #bfdbfe;     /* blue-200 */
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;  /* gray-200 */
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-top: 1rem;
+}
+
+.card h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.15rem;
+}
+
+/* ---------- Toolbar (optional search/filter) ---------- */
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+.toolbar .right {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.input {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+}
+.input:focus {
+  border-color: #3b82f6; /* blue-500 */
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+/* ---------- Table/List ---------- */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table thead th {
+  text-align: left;
+  color: #6b7280; /* gray-500 */
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 0.75rem;
+  background: #fafafa;
+}
+
+.table tbody td {
+  border-bottom: 1px solid #f1f5f9; /* slate-100 */
+  padding: 0.75rem 0.75rem;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: #fafafa;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 1rem 0;
+}
+
+.right {
+  text-align: right;
+}
+
+/* ---------- Pills / Badges ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc; /* slate-50 */
+  color: #334155;      /* slate-700 */
+}
+
+.pill-active {
+  background: #ecfdf5;  /* emerald-50 */
+  color: #065f46;       /* emerald-800 */
+  border-color: #a7f3d0;/* emerald-200 */
+}
+.pill-returned {
+  background: #eff6ff;  /* blue-50 */
+  color: #1e3a8a;       /* blue-900 */
+  border-color: #bfdbfe;/* blue-200 */
+}
+.pill-overdue {
+  background: #fef3c7;  /* amber-100 */
+  color: #92400e;       /* amber-800 */
+  border-color: #fde68a;/* amber-300 */
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: #111827; /* gray-900 */
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: transform .02s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.btn:hover {
+  background: #0b1220;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.secondary {
+  background: #fff;
+  color: #111827;
+  border-color: #e5e7eb;
+}
+.btn.secondary:hover {
+  background: #f9fafb;
+}
+
+.btn.danger {
+  background: #b91c1c; /* red-700 */
+}
+.btn.danger:hover {
+  background: #991b1b;
+}
+
+.btn.tiny {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+.btn[disabled],
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Actions cell ---------- */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* ---------- Utility grid (if you present cards per reservation) ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+}
+.col-6 { grid-column: span 6; }
+.col-4 { grid-column: span 4; }
+.col-3 { grid-column: span 3; }
+.col-12 { grid-column: span 12; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .right { text-align: left; }
+  .actions { justify-content: flex-start; }
+  .table thead { display: none; }
+  .table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+    padding: 0.75rem;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    margin-bottom: 0.65rem;
+  }
+  .table tbody td {
+    border: none;
+    padding: 0;
+  }
+}

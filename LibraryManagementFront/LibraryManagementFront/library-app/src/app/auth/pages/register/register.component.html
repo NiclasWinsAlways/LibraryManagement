@@ -1,0 +1,43 @@
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-sub">Join LibraryApp to browse and borrow faster.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <div class="row">
+        <label for="name">Name</label>
+        <input id="name" class="input" type="text" formControlName="name" />
+        <div class="error" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+          Name must be at least 2 characters.
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="email">Email</label>
+        <input id="email" class="input" type="email" formControlName="email" />
+        <div class="error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Please enter a valid email.
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="password">Password</label>
+        <input id="password" class="input" type="password" formControlName="password" />
+      </div>
+
+      <div class="row">
+        <label for="confirm">Confirm Password</label>
+        <input id="confirm" class="input" type="password" formControlName="confirm" />
+        <div class="error"
+             *ngIf="form.hasError('passwordMismatch') && (form.get('confirm')?.touched || form.get('password')?.touched)">
+          Passwords must match.
+        </div>
+      </div>
+
+      <div class="actions">
+        <span>Already have an account? <a class="link" routerLink="/auth/login">Sign in</a></span>
+        <button class="btn primary" type="submit" [disabled]="form.invalid">Create account</button>
+      </div>
+    </form>
+  </div>
+</div>

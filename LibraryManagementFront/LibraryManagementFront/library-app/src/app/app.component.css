@@ -1,0 +1,126 @@
+:root {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #60a5fa;
+  --accent-strong: #3b82f6;
+  --border: rgba(255,255,255,0.08);
+  --ring: rgba(96,165,250,.35);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, Arial, sans-serif; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(8px);
+  background: rgba(15,23,42,0.8);
+}
+.site-header .container {
+  display: flex; align-items: center; justify-content: space-between; min-height: 64px;
+}
+.brand { text-decoration: none; font-weight: 800; font-size: 20px; color: var(--text); }
+.brand span { color: var(--accent); }
+
+.nav a { color: var(--text); text-decoration: none; margin-left: 16px; padding: 8px 10px; border-radius: 8px; }
+.nav a:hover { background: rgba(255,255,255,0.06); }
+.nav a.active { outline: 2px solid rgba(96,165,250,0.6); }
+
+.main { padding: 32px 0 64px; }
+
+.hero { text-align: center; padding: 40px 0; }
+.hero h1 { font-size: 40px; margin: 0 0 10px; }
+.tagline { color: var(--muted); margin-bottom: 24px; }
+
+/* ---------- Buttons (revamped) ---------- */
+.cta { display: inline-flex; gap: 12px; }
+
+/* Base */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: 12px 18px; border-radius: 12px;
+  font-weight: 600; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 6px 16px rgba(0,0,0,.20);
+  transition: transform .06s ease, box-shadow .2s ease, background .2s ease, filter .2s ease;
+}
+.btn:hover { background: rgba(255,255,255,0.10); filter: none; box-shadow: 0 8px 22px rgba(0,0,0,.28); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 0; box-shadow: 0 0 0 4px var(--ring); }
+
+/* Primary (Login): glossy fill with subtle gradient and lift */
+.btn.primary {
+  color: #0b1220;
+  border-color: transparent;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+  box-shadow:
+    0 8px 22px rgba(59,130,246,.35),
+    inset 0 1px 0 rgba(255,255,255,.25);
+}
+.btn.primary:hover {
+  filter: brightness(1.05);
+  box-shadow:
+    0 10px 26px rgba(59,130,246,.45),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+.btn.primary:active { transform: translateY(1px); }
+.btn.primary:focus-visible { box-shadow: 0 0 0 4px var(--ring), 0 8px 22px rgba(59,130,246,.35); }
+
+/* Register (uses base .btn): enhance hover for non-primary/non-catalog */
+.btn:hover:not(.primary):not(.catalog) {
+  border-color: rgba(96,165,250,.35);
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 22px rgba(0,0,0,.28), 0 0 0 3px rgba(96,165,250,.15);
+}
+
+/* Catalog: outlined accent + glow */
+.btn.catalog {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 0 0 0 rgba(96,165,250,0);
+}
+.btn.catalog:hover {
+  background: rgba(96,165,250,.12);
+  filter: none;
+  box-shadow: 0 0 0 4px rgba(96,165,250,.25);
+}
+.btn.catalog:active { transform: translateY(1px); }
+
+.btn .icon{ display:inline-block; line-height:0; }
+
+/* ---------- Cards & grid ---------- */
+.features {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px; margin-top: 40px;
+}
+.card {
+  background: var(--panel); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 18px;
+}
+.card h3 { margin: 0 0 8px; }
+.card p { margin: 0; color: var(--muted); }
+
+.site-footer { border-top: 1px solid var(--border); padding: 16px 0 32px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .features { grid-template-columns: 1fr; }
+}
+.btn-nav {
+  background: rgba(96, 165, 250, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+.btn-nav:hover {
+  background: rgba(96, 165, 250, 0.25);
+}

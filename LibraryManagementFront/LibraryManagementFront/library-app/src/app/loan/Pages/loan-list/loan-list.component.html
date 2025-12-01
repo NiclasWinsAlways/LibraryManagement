@@ -1,0 +1,52 @@
+<div class="container catalog-wrap">
+  <h1 class="page-title">Loans</h1>
+
+  <!-- block if not logged in -->
+  <div *ngIf="!isLoggedIn" class="card">
+    <p>You must be logged in to see your loans.</p>
+    <a routerLink="/auth/login" class="btn primary">Go to login</a>
+  </div>
+
+  <!-- show table if logged in -->
+  <ng-container *ngIf="isLoggedIn">
+    <div *ngIf="loans$ | async as loans; else loading">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Book</th>
+            <th>User</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="!loans.length">
+            <td colspan="6" class="empty">No loans yet.</td>
+          </tr>
+          <tr *ngFor="let l of loans">
+            <td>{{ l.id }}</td>
+            <td>{{ l.bookId }}</td>
+            <td>{{ l.userId }}</td>
+            <td>{{ toLocal(l.startDate) }}</td>
+            <td>{{ toLocal(l.endDate) }}</td>
+            <td>
+              <span
+                class="badge"
+                [class.good]="l.status === 'Aktiv'"
+                [class.bad]="l.status === 'Forfalden'"
+              >
+                {{ l.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #loading>
+      <p>Loading loans…</p>
+    </ng-template>
+  </ng-container>
+</div>

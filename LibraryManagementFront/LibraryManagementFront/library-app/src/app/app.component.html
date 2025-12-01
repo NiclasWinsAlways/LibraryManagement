@@ -1,0 +1,81 @@
+<header class="site-header">
+  <div class="container">
+    <a routerLink="/" class="brand">
+      📚 Library<span>App</span>
+    </a>
+
+    <nav class="nav">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a>
+
+      <a routerLink="/catalog" routerLinkActive="active">Catalog</a>
+
+      <!-- Admin link only for admins -->
+      <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active">Admin</a>
+
+      <!-- show these when NOT logged in -->
+      <ng-container *ngIf="!isLoggedIn; else loggedInLinks">
+        <a routerLink="/auth/login" routerLinkActive="active">Login</a>
+        <a routerLink="/auth/register" routerLinkActive="active" class="btn-nav">
+          Register
+        </a>
+      </ng-container>
+
+      <!-- show this when logged in -->
+      <ng-template #loggedInLinks>
+        <button class="btn-nav" type="button" (click)="onLogout()">Logout</button>
+      </ng-template>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+  <!-- Front page only on "/" -->
+  <section *ngIf="isHome" class="hero container">
+    <h1>Welcome to LibraryApp</h1>
+    <p class="tagline">Browse, borrow, and manage your books with a clean, modern interface.</p>
+
+    <div class="cta">
+      <!-- when NOT logged in -->
+      <a *ngIf="!isLoggedIn" routerLink="/auth/login" class="btn primary">Login</a>
+      <a *ngIf="!isLoggedIn" routerLink="/auth/register" class="btn">Create account</a>
+
+      <!-- when logged in -->
+      <button *ngIf="isLoggedIn" class="btn" (click)="onLogout()">Logout</button>
+
+      <a routerLink="/catalog" class="btn catalog">
+        <span class="icon">📖</span> Catalog
+      </a>
+
+      <!-- Optional: quick access to Admin from hero when admin -->
+      <a *ngIf="isAdmin" routerLink="/admin" class="btn">Admin</a>
+    </div>
+
+    <section class="features">
+      <div class="card">
+        <h3>Search Catalog</h3>
+        <p>Find books by title, author, or ISBN in seconds.</p>
+      </div>
+      <div class="card">
+        <h3>Track Loans</h3>
+        <p>See current loans, due dates, and history at a glance.</p>
+      </div>
+      <div class="card">
+        <h3>Admin Tools</h3>
+        <p>Add titles, manage users, and keep your library organized.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- Routed pages render here (catalog/auth) -->
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <small>© {{ year }} LibraryApp</small>
+  </div>
+</footer>
