@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
-using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
 {
@@ -8,8 +9,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class LoanController : ControllerBase
     {
-        private readonly LoanService _svc;
-        public LoanController(LoanService svc) => _svc = svc;
+        private readonly ILoanService _svc;
+        public LoanController(ILoanService svc) => _svc = svc;
 
         // GET: api/Loan/getloans
         // Returns all active or historical loans.

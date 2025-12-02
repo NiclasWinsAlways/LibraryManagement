@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
-using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
 {
@@ -8,8 +9,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class BookController : ControllerBase
     {
-        private readonly BookService _svc;
-        public BookController(BookService svc) => _svc = svc;
+        private readonly IBookService _svc;
+        public BookController(IBookService svc) => _svc = svc;
 
         // GET: api/Book/getbooks
         // Returns all books in the system.

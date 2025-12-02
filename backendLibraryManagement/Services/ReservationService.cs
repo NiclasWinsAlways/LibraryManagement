@@ -1,17 +1,18 @@
 ﻿using backendLibraryManagement.Data;
 using backendLibraryManagement.Dto;
 using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
     // Handles creation, cancellation, and processing of book reservations.
-    public class ReservationService
+    public class ReservationService: IReservationService
     {
         private readonly LibraryContext _db;
-        private readonly NotificationService _notification;
+        private readonly INotificationService _notification;
 
-        public ReservationService(LibraryContext db, NotificationService notification)
+        public ReservationService(LibraryContext db, INotificationService notification)
         {
             _db = db;
             _notification = notification;

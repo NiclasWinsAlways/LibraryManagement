@@ -1,6 +1,7 @@
 ﻿using backendLibraryManagement.Data;
 using backendLibraryManagement.Dto;
 using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Text;
 namespace backendLibraryManagement.Services
 {
     // Handles CRUD operations and authentication helpers for users.
-    public class UserService
+    public class UserService: IUserService
     {
         private readonly LibraryContext _db;
 

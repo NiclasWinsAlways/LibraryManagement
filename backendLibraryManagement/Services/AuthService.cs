@@ -1,4 +1,5 @@
 ﻿using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,12 +9,12 @@ using System.Text;
 namespace backendLibraryManagement.Services
 {
     // Handles user authentication and JWT token generation.
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IConfiguration _config;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public AuthService(IConfiguration config, UserService userService)
+        public AuthService(IConfiguration config, IUserService userService)
         {
             _config = config;
             _userService = userService;

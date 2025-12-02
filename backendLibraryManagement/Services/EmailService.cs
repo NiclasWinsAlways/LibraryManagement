@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using backendLibraryManagement.Services.Interfaces;
+using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace backendLibraryManagement.Services
 {
     // Simple SMTP-based email sender.
     // Used primarily for notifications delivered to users.
-    public class EmailService
+    public class EmailService: IEmailService
     {
         private readonly string _host;
         private readonly int _port;

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
-using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
 {
@@ -8,8 +9,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class ReservationController : ControllerBase
     {
-        private readonly ReservationService _svc;
-        public ReservationController(ReservationService svc) => _svc = svc;
+        private readonly IReservationService _svc;
+        public ReservationController(IReservationService svc) => _svc = svc;
 
         // GET: api/Reservation/getReservations
         // Returns all reservations.

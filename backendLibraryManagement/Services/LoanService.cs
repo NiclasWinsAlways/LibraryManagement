@@ -1,16 +1,17 @@
-﻿    using Microsoft.EntityFrameworkCore;
-    using backendLibraryManagement.Data;
+﻿    using backendLibraryManagement.Data;
     using backendLibraryManagement.Dto;
     using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
+    using Microsoft.EntityFrameworkCore;
 
     namespace backendLibraryManagement.Services
     {
     // Handles loan-related operations such as creating, returning, and scanning due loans.
-        public class LoanService
-        {
+        public class LoanService: ILoanService
+    {
             private readonly LibraryContext _db;
-        private readonly NotificationService _notification;
-        public LoanService(LibraryContext db, NotificationService notification) => (_db,_notification) = (db, notification);
+            private readonly INotificationService _notification;
+            public LoanService(LibraryContext db, INotificationService notification) => (_db,_notification) = (db, notification);
 
              // Returns all loans with related user and book included.
             public async Task<List<LoanDto>> GetAllAsync()

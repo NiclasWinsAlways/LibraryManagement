@@ -1,12 +1,13 @@
 ﻿using backendLibraryManagement.Data;
 using backendLibraryManagement.Dto;
 using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
     // Handles book-related operations: creation, update, deletion, and queries.
-    public class BookService
+    public class BookService: IBookService
     {
         private readonly LibraryContext _db;
         public BookService(LibraryContext db) => _db = db;

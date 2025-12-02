@@ -1,16 +1,15 @@
-﻿using Xunit;
-using Moq;
-using backendLibraryManagement.Controllers;
-using backendLibraryManagement.Services;
+﻿using backendLibraryManagement.Controllers;
 using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 public class BookControllerTests
 {
     [Fact]
     public async Task Get_ShouldReturnNotFound_WhenMissing()
     {
-        var mock = new Mock<BookService>(null!);
+        var mock = new Mock<IBookService>();
         mock.Setup(s => s.GetByIdAsync(5)).ReturnsAsync((BookDto?)null);
 
         var ctrl = new BookController(mock.Object);
@@ -23,7 +22,7 @@ public class BookControllerTests
     [Fact]
     public async Task Create_ShouldReturnCreated()
     {
-        var mock = new Mock<BookService>(null!);
+        var mock = new Mock<IBookService>();
         mock.Setup(s => s.CreateAsync(It.IsAny<CreateBookDto>()))
             .ReturnsAsync(new BookDto { Id = 1, Title = "T" });
 

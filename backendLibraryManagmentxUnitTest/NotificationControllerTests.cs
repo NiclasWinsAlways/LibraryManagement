@@ -1,22 +1,18 @@
-﻿using Xunit;
-using Moq;
-using backendLibraryManagement.Controllers;
-using backendLibraryManagement.Services;
+﻿using backendLibraryManagement.Controllers;
 using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Moq;
 
 public class NotificationControllerTests
 {
     [Fact]
     public async Task GetForUser_ShouldReturnNotifications()
     {
-        var mock = new Mock<NotificationService>(null!);
+        var mock = new Mock<INotificationService>();
 
         mock.Setup(s => s.GetUserNotificationsAsync(1))
-            .ReturnsAsync(new List<NotificationDto>
-            {
+            .ReturnsAsync(new List<NotificationDto> {
                 new NotificationDto { Id = 1, Message = "Hello" }
             });
 
@@ -31,7 +27,7 @@ public class NotificationControllerTests
     [Fact]
     public async Task MarkRead_ShouldReturnNoContent()
     {
-        var mock = new Mock<NotificationService>(null!);
+        var mock = new Mock<INotificationService>();
         mock.Setup(s => s.MarkAsReadAsync(1)).Returns(Task.CompletedTask);
 
         var ctrl = new NotificationController(mock.Object);

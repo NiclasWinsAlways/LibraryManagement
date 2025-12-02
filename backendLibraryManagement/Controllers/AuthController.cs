@@ -1,5 +1,6 @@
 ﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
@@ -8,8 +9,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _auth;
-        public AuthController(AuthService auth) => _auth = auth;
+        private readonly IAuthService _auth;
+        public AuthController(IAuthService auth) => _auth = auth;
 
         // POST api/Auth/login
         // Attempts to authenticate a user and return a JWT token if credentials are valid.

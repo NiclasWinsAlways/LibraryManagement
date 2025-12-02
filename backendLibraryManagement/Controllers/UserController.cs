@@ -1,5 +1,6 @@
 ﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -10,8 +11,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _svc;
-        public UserController(UserService svc) => _svc = svc;
+        private readonly IUserService _svc;
+        public UserController(IUserService svc) => _svc = svc;
 
         // GET: api/User/GetUsers
         // Returns all registered users.

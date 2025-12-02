@@ -1,16 +1,15 @@
-﻿using Xunit;
-using Moq;
-using backendLibraryManagement.Controllers;
-using backendLibraryManagement.Services;
+﻿using backendLibraryManagement.Controllers;
 using backendLibraryManagement.Dto;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 public class LoanControllerTests
 {
     [Fact]
     public async Task Get_ShouldReturnNotFound_WhenMissing()
     {
-        var mock = new Mock<LoanService>(null!);
+        var mock = new Mock<ILoanService>();
         mock.Setup(s => s.GetByIdAsync(9)).ReturnsAsync((LoanDto?)null);
 
         var ctrl = new LoanController(mock.Object);
@@ -23,7 +22,7 @@ public class LoanControllerTests
     [Fact]
     public async Task Create_ShouldReturnBadRequest_WhenFails()
     {
-        var mock = new Mock<LoanService>(null!);
+        var mock = new Mock<ILoanService>();
         mock.Setup(s => s.CreateAsync(It.IsAny<CreateLoanDto>()))
             .ReturnsAsync((false, "err", null));
 

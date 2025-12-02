@@ -1,5 +1,6 @@
 ﻿using backendLibraryManagement.Dto;
 using backendLibraryManagement.Services;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backendLibraryManagement.Controllers
@@ -8,11 +9,8 @@ namespace backendLibraryManagement.Controllers
     [Route("api/[controller]")]
     public class NotificationController:ControllerBase
     {
-        private readonly NotificationService _svc;
-        public NotificationController(NotificationService svc)
-        {
-            _svc = svc;
-        }
+        private readonly INotificationService _svc;
+        public NotificationController(INotificationService svc) => _svc = svc;
 
         // GET: api/Notification/user/{userId}
         // Returns all notifications for a specific user.

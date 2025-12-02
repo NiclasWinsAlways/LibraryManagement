@@ -52,6 +52,15 @@ namespace backendLibraryManagement.Data
 
             // AFSLUT MODEL KONFIGURATION
             base.OnModelCreating(modelBuilder);
+
+            // seed database 
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Book>().HasData(
+                new Book { Id = 1, Title = "The Hobbit", Author = "J.R.R. Tolkien", Genre = "Fantasy", ISBN = "9780007458424", CopiesAvailable = 3, IsAvailable = true },
+                new Book { Id = 2, Title = "1984", Author = "George Orwell", Genre = "Dystopian", ISBN = "9780451524935", CopiesAvailable = 5, IsAvailable = true },
+                new Book { Id = 3, Title = "Clean Code", Author = "Robert C. Martin", Genre = "Programming", ISBN = "9780132350884", CopiesAvailable = 2, IsAvailable = true }
+            );
         }
     }
 }

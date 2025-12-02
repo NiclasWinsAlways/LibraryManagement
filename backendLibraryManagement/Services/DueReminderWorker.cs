@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using backendLibraryManagement.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace backendLibraryManagement.Services
 {
@@ -59,7 +60,7 @@ namespace backendLibraryManagement.Services
                 try
                 {
                     using var scope = _scopeFactory.CreateScope();
-                    var notifier = scope.ServiceProvider.GetRequiredService<NotificationService>();
+                    var notifier = scope.ServiceProvider.GetRequiredService<INotificationService>();
                     await notifier.NotifyUpcomingDueDatesAsync();
                 }catch(Exception ex)
                 {

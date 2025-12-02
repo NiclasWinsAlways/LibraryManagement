@@ -1,17 +1,18 @@
 ﻿using backendLibraryManagement.Data;
 using backendLibraryManagement.Dto;
 using backendLibraryManagement.Model;
+using backendLibraryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
     // Handles app-level notifications for users.
     // Notifications are stored in the database and optionally emailed to the user.
-    public class NotificationService
+    public class NotificationService: INotificationService
     {
         private readonly LibraryContext _db;
-        private readonly EmailService _email;
-        public NotificationService(LibraryContext db,EmailService email)=> (_db,_email) = (db,email);
+        private readonly IEmailService _email;
+        public NotificationService(LibraryContext db,IEmailService email)=> (_db,_email) = (db,email);
 
         // Creates a new notification and optionally sends an email to the user.
         public async Task CreateAsync(int userId, string message)
