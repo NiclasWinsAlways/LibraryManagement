@@ -1,11 +1,18 @@
-.page-title { margin: 18px 0; font-size: 28px; font-weight: 800; }
+.page-title {
+  margin: 18px 0 20px;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+/* ── Filter grid ───────────────────────────────────── */
 
 .grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
+
 @media (max-width: 1100px) {
   .grid { grid-template-columns: 1fr 1fr; }
 }
@@ -13,39 +20,136 @@
   .grid { grid-template-columns: 1fr; }
 }
 
-.row { display: grid; gap: 6px; }
-label { font-size: 14px; color: var(--muted); }
+.row {
+  display: grid;
+  gap: 6px;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .input {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: #0b1220; color: var(--text); outline: none;
+  background: #020617;
+  color: var(--text);
+  outline: none;
+  font-size: 0.95rem;
 }
-.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring); }
+
+.input::placeholder {
+  color: #6b7280;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* Make the select look like the other inputs */
+select.input {
+  appearance: none;
+}
+
+/* ── Results card / table ──────────────────────────── */
 
 .table-wrap {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 12px 14px;
+  border-radius: 18px;
+  padding: 10px 14px 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
 }
 
+/* Top row: “X results” + pager */
 .meta {
-  display: flex; align-items: center; justify-content: space-between;
-  margin: 8px 4px 12px; color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 4px 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
-.pager { display: flex; align-items: center; gap: 10px; }
 
-.table { width: 100%; border-collapse: collapse; }
-.table th, .table td { padding: 10px; border-bottom: 1px solid var(--border); }
-.table th { text-align: left; color: var(--muted); font-weight: 600; }
-.right { text-align: right; }
-.empty { text-align: center; color: var(--muted); }
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+/* Use your normal .btn but shrink for the pager */
+.pager .btn {
+  min-width: 64px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  padding: 0 14px;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  text-align: left;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.table tbody tr:hover {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.right {
+  text-align: right;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 14px 0;
+}
+
+/* Status badge */
 .badge {
-  display: inline-block; padding: 4px 8px; border-radius: 999px;
-  font-size: 12px; border: 1px solid var(--border); background: rgba(255,255,255,.06);
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
 }
-.badge.good { background: rgba(34,197,94,.2) }   /* greenish */
-.badge.bad  { background: rgba(239,68,68,.2) }   /* redish */
+
+.badge.good {
+  background: rgba(34, 197, 94, 0.2);   /* greenish */
+}
+
+.badge.bad {
+  background: rgba(239, 68, 68, 0.2);   /* reddish */
+}
+
+/* Loan/Reserve buttons in table */
+.btn.tiny {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+}
+
+.btn.tiny.secondary {
+  background: #111827;
+  border: 1px solid #4b5563;
+}

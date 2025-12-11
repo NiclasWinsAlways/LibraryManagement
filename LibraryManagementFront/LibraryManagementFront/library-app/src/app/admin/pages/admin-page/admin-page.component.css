@@ -1,31 +1,87 @@
 .admin-wrap {
   padding: 32px 0 64px;
 }
+
+/* Header */
+.admin-wrap h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.admin-wrap .muted {
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Grid of main admin cards */
 .admin-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 16px;
   margin-top: 24px;
 }
+
+/* Card style */
 .card {
-  background: #111827;
-  border: 1px solid rgba(255,255,255,.05);
-  border-radius: 12px;
-  padding: 16px;
+  background: #020817;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
+
 .card h3 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 600;
 }
-.muted {
+
+.card p {
+  margin: 0;
   color: #9ca3af;
+  font-size: 0.95rem;
 }
+
+/* Hover effect */
+.card:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 20px 50px rgba(56, 189, 248, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Notifications card – full row under grid */
+.notifications-card {
+  margin-top: 24px;
+}
+
+/* Button */
 .btn {
   display: inline-block;
-  margin-top: 8px;
-  background: #60a5fa;
-  color: #0f172a;
-  border-radius: 8px;
-  padding: 6px 12px;
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: #0b1120;
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 12px 25px rgba(56, 189, 248, 0.5);
+  transition: transform 0.1s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 35px rgba(56, 189, 248, 0.6);
+  filter: brightness(1.03);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(56, 189, 248, 0.4);
 }

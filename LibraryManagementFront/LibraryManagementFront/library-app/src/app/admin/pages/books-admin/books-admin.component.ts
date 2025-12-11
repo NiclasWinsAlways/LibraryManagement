@@ -58,7 +58,8 @@ export class BooksAdminComponent implements OnInit {
       Author: ['', [Validators.required, Validators.minLength(1)]],
       Genre: [''],
       ISBN: [''],
-      CopiesAvailable: [0, [Validators.min(0)]],
+      // default to 1, still allow 0+
+      CopiesAvailable: [1, [Validators.min(0)]],
     });
 
     this.editForm = this.fb.group({
@@ -66,7 +67,7 @@ export class BooksAdminComponent implements OnInit {
       Author: ['', [Validators.required, Validators.minLength(1)]],
       Genre: [''],
       ISBN: [''],
-      CopiesAvailable: [0, [Validators.min(0)]],
+      CopiesAvailable: [1, [Validators.min(0)]],
     });
 
     this.load();
@@ -108,14 +109,29 @@ export class BooksAdminComponent implements OnInit {
     );
   }
 
-  /** POST /api/Book/create  (PascalCase body) */
+  /** POST /api/Book/create */
   create(): void {
     if (this.loading) return;
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
       return;
     }
-    const payload = this.createForm.value; // PascalCase
+
+    const f = this.createForm.value;
+    const copies = Number(f.CopiesAvailable ?? 0);
+
+    const payload = {
+      Title: f.Title,
+      Author: f.Author,
+      Genre: f.Genre,
+      ISBN: f.ISBN,
+      // send both just in case backend expects one or the other
+      CopiesAvailable: copies,
+      copiesAvailable: copies,
+    };
+
+    console.log('[BOOKS] create payload', payload);
+
     const url = `${this.api}/api/Book/create`;
 
     this.loading = true; this.error = null;
@@ -123,7 +139,13 @@ export class BooksAdminComponent implements OnInit {
       .subscribe({
         next: () => {
           this.loading = false;
-          this.createForm.reset({ Title: '', Author: '', Genre: '', ISBN: '', CopiesAvailable: 0 });
+          this.createForm.reset({
+            Title: '',
+            Author: '',
+            Genre: '',
+            ISBN: '',
+            CopiesAvailable: 1,
+          });
           this.load();
         },
         error: (err) => {
@@ -142,7 +164,7 @@ export class BooksAdminComponent implements OnInit {
       Author: b.author,
       Genre: b.genre,
       ISBN: b.isbn,
-      CopiesAvailable: b.copiesAvailable ?? 0
+      CopiesAvailable: b.copiesAvailable ?? 1
     });
   }
 
@@ -158,8 +180,22 @@ export class BooksAdminComponent implements OnInit {
       this.editForm.markAllAsTouched();
       return;
     }
+
     const id = this.editing.id;
-    const body = this.editForm.value; // PascalCase
+    const f = this.editForm.value;
+    const copies = Number(f.CopiesAvailable ?? 0);
+
+    const body = {
+      Title: f.Title,
+      Author: f.Author,
+      Genre: f.Genre,
+      ISBN: f.ISBN,
+      CopiesAvailable: copies,
+      copiesAvailable: copies,
+    };
+
+    console.log('[BOOKS] update payload', id, body);
+
     const url = `${this.api}/api/Book/${id}`;
 
     this.loading = true; this.error = null;
