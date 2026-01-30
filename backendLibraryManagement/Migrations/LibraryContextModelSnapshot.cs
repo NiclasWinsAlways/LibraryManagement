@@ -45,12 +45,12 @@ namespace backendLibraryManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalCopies")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -64,8 +64,8 @@ namespace backendLibraryManagement.Migrations
                             CopiesAvailable = 3,
                             Genre = "Fantasy",
                             ISBN = "9780007458424",
-                            IsAvailable = true,
-                            Title = "The Hobbit"
+                            Title = "The Hobbit",
+                            TotalCopies = 3
                         },
                         new
                         {
@@ -74,8 +74,8 @@ namespace backendLibraryManagement.Migrations
                             CopiesAvailable = 5,
                             Genre = "Dystopian",
                             ISBN = "9780451524935",
-                            IsAvailable = true,
-                            Title = "1984"
+                            Title = "1984",
+                            TotalCopies = 5
                         },
                         new
                         {
@@ -84,9 +84,77 @@ namespace backendLibraryManagement.Migrations
                             CopiesAvailable = 2,
                             Genre = "Programming",
                             ISBN = "9780132350884",
-                            IsAvailable = true,
-                            Title = "Clean Code"
+                            Title = "Clean Code",
+                            TotalCopies = 2
                         });
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId", "BookId")
+                        .IsUnique();
+
+                    b.ToTable("Favorites");
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Fine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LoanId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("LoanId", "Status");
+
+                    b.ToTable("Fines");
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.Loan", b =>
@@ -101,6 +169,12 @@ namespace backendLibraryManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExtendedCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReturnedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
@@ -150,6 +224,43 @@ namespace backendLibraryManagement.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("backendLibraryManagement.Model.Receipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("FineId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FineId");
+
+                    b.HasIndex("ReceiptNumber")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Receipts");
+                });
+
             modelBuilder.Entity("backendLibraryManagement.Model.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -164,20 +275,61 @@ namespace backendLibraryManagement.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("BookId", "Status", "CreatedAt");
+
+                    b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations");
+                    b.HasIndex("BookId", "CreatedAt");
+
+                    b.HasIndex("BookId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.User", b =>
@@ -188,9 +340,15 @@ namespace backendLibraryManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailOptIn")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -200,13 +358,57 @@ namespace backendLibraryManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("SmsOptIn")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Favorite", b =>
+                {
+                    b.HasOne("backendLibraryManagement.Model.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backendLibraryManagement.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Fine", b =>
+                {
+                    b.HasOne("backendLibraryManagement.Model.Loan", "Loan")
+                        .WithMany()
+                        .HasForeignKey("LoanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backendLibraryManagement.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Loan");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("backendLibraryManagement.Model.Loan", b =>
@@ -239,7 +441,45 @@ namespace backendLibraryManagement.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backendLibraryManagement.Model.Receipt", b =>
+                {
+                    b.HasOne("backendLibraryManagement.Model.Fine", "Fine")
+                        .WithMany()
+                        .HasForeignKey("FineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backendLibraryManagement.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Fine");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backendLibraryManagement.Model.Reservation", b =>
+                {
+                    b.HasOne("backendLibraryManagement.Model.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backendLibraryManagement.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backendLibraryManagement.Model.Review", b =>
                 {
                     b.HasOne("backendLibraryManagement.Model.Book", "Book")
                         .WithMany()

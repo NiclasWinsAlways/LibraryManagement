@@ -1,5 +1,4 @@
 ﻿using backendLibraryManagement.Dto;
-using backendLibraryManagement.Services;
 using backendLibraryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +11,9 @@ namespace backendLibraryManagement.Controllers
         private readonly IReservationService _svc;
         public ReservationController(IReservationService svc) => _svc = svc;
 
-        // GET: api/Reservation/getReservations
-        // Returns all reservations.
         [HttpGet("getReservations")]
         public async Task<IActionResult> GetAll() => Ok(await _svc.GetAllAsync());
 
-        // GET: api/Reservation/{id}
-        // Returns a single reservation.
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -27,18 +22,25 @@ namespace backendLibraryManagement.Controllers
             return Ok(res);
         }
 
-        // POST: api/Reservation/create
-        // Creates a reservation for a book.
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateReservationDto dto)
         {
             var (success, error, reservation) = await _svc.CreateAsync(dto);
-            if (!success) return BadRequest(new { error });
+            if (!success)
+            {
+                return error switch
+                {
+                    "BookNotFound" => NotFound(new { error = "Book not found" }),
+                    "UserNotFound" => NotFound(new { error = "User not found" }),
+                    "BookAvailableLoanInstead" => Conflict(new { error = "Book is available — loan instead" }),
+                    "AlreadyReserved" => Conflict(new { error = "You already have an active/ready reservation for this book" }),
+                    _ => BadRequest(new { error })
+                };
+            }
+
             return CreatedAtAction(nameof(Get), new { id = reservation!.Id }, reservation);
         }
 
-        // POST: api/Reservation/{id}/cancel
-        // Cancels a reservation if possible.
         [HttpPost("{id:int}/cancel")]
         public async Task<IActionResult> Cancel(int id)
         {
@@ -47,8 +49,6 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
-        // PUT: api/Reservation/{id}
-        // Updates a reservation.
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateReservationDto dto)
         {
@@ -64,8 +64,6 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Reservation/{id}
-        // Deletes a reservation entirely.
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -74,5 +72,22 @@ namespace backendLibraryManagement.Controllers
             return NoContent();
         }
 
+        // NEW: get queue overview for a book
+        // GET: api/Reservation/book/{bookId}/queue
+        [HttpGet("book/{bookId:int}/queue")]
+        public async Task<IActionResult> GetQueue(int bookId)
+        {
+            var info = await _svc.GetQueueForBookAsync(bookId);
+            return Ok(info);
+        }
+
+        // NEW: manual expiry scan
+        // POST: api/Reservation/run-expiry-scan
+        [HttpPost("run-expiry-scan")]
+        public async Task<IActionResult> RunExpiryScan()
+        {
+            var n = await _svc.ExpireReadyReservationsAsync();
+            return Ok(new { expired = n });
+        }
     }
 }

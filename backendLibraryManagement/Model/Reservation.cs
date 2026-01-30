@@ -11,5 +11,6 @@
         public User? User { get; set; } // Navigation property to the reserving user.
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Timestamp for when the reservation was created.
         public string Status { get; set; } = "Active"; // Status of the reservation:"Active" | "Cancelled" | "Fulfilled"
+        public DateTime? ExpiresAt { get; set; } // Optional expiration date for the reservation.
     }
 }

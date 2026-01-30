@@ -10,5 +10,7 @@ namespace backendLibraryManagement.Services.Interfaces
         Task<bool> CancelAsync(int id);
         Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateReservationDto dto);
         Task<bool> DeleteAsync(int id);
+        Task<object> GetQueueForBookAsync(int bookId);
+        Task<int> ExpireReadyReservationsAsync();
     }
 }

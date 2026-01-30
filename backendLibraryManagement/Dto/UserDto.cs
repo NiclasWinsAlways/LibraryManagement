@@ -7,5 +7,11 @@
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
         public string Role { get; set; } = ""; // User role (Admin / Låner / etc.)
+
+        public string? PhoneNumber { get; set; }
+        public bool SmsOptIn { get; set; }
+        public bool EmailOptIn { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }

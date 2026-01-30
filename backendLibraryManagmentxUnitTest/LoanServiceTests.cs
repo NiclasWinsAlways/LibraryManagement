@@ -23,17 +23,19 @@ namespace backendLibraryManagmentxUnitTest
         // FIXED helper to create LoanService with mocked NotificationService
         private LoanService CreateLoanService(LibraryContext db)
         {
-            var emailMock = new Mock<IEmailService>();
-            var notif = new NotificationService(db, emailMock.Object);
+            var notifMock = new Mock<INotificationService>();
+            notifMock
+                .Setup(n => n.CreateAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
 
-            return new LoanService(db, notif);
+            return new LoanService(db, notifMock.Object);
         }
 
         [Fact]
         public async Task CreateLoan_ShouldFail_WhenNoCopiesAvailable()
         {
             var db = GetDb();
-            db.Books.Add(new Book { Id = 1, Title = "Bog", CopiesAvailable = 0, IsAvailable = false });
+            db.Books.Add(new Book { Id = 1, Title = "Bog", CopiesAvailable = 0});
             db.Users.Add(new User { Id = 2, Name = "User" });
             await db.SaveChangesAsync();
 
@@ -50,7 +52,7 @@ namespace backendLibraryManagmentxUnitTest
         public async Task CreateLoan_ShouldFail_WhenUserNotFound()
         {
             var db = GetDb();
-            db.Books.Add(new Book { Id = 1, CopiesAvailable = 1, IsAvailable = true });
+            db.Books.Add(new Book { Id = 1, CopiesAvailable = 1});
             await db.SaveChangesAsync();
 
             var svc = CreateLoanService(db);
@@ -66,7 +68,7 @@ namespace backendLibraryManagmentxUnitTest
         public async Task CreateLoan_Should_Decrease_Copies()
         {
             var db = GetDb();
-            db.Books.Add(new Book { Id = 1, Title = "Bog", CopiesAvailable = 2, IsAvailable = true });
+            db.Books.Add(new Book { Id = 1, Title = "Bog", CopiesAvailable = 2 });
             db.Users.Add(new User { Id = 2 });
             await db.SaveChangesAsync();
 
@@ -85,7 +87,7 @@ namespace backendLibraryManagmentxUnitTest
         public async Task ReturnLoan_Should_Set_Status_And_Increase_Copies()
         {
             var db = GetDb();
-            db.Books.Add(new Book { Id = 1, CopiesAvailable = 0, IsAvailable = false });
+            db.Books.Add(new Book { Id = 1, CopiesAvailable = 0});
             db.Users.Add(new User { Id = 10 });
             db.Loans.Add(new Loan { Id = 5, BookId = 1, UserId = 10, Status = "Aktiv" });
             await db.SaveChangesAsync();

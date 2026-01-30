@@ -7,5 +7,11 @@
         public string Email { get; set; } = "";
         public string Password { get; set; } = "";
         public string Role { get; set; } = "Låner"; // Default role is "Låner" (borrower) unless specified otherwise.
+
+
+        // Optional at registration
+        public string? PhoneNumber { get; set; }
+        public bool SmsOptIn { get; set; } = false;
+        public bool EmailOptIn { get; set; } = true;
     }
 }

@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backendLibraryManagement.Services
 {
-    // Handles app-level notifications for users.
-    // Notifications are stored in the database and optionally emailed to the user.
-    public class NotificationService: INotificationService
+    public class NotificationService : INotificationService
     {
         private readonly LibraryContext _db;
         private readonly IEmailService _email;
-        public NotificationService(LibraryContext db,IEmailService email)=> (_db,_email) = (db,email);
+        private readonly ISmsService _sms;
 
-        // Creates a new notification and optionally sends an email to the user.
+        public NotificationService(LibraryContext db, IEmailService email, ISmsService sms)
+            => (_db, _email, _sms) = (db, email, sms);
+
         public async Task CreateAsync(int userId, string message)
         {
             var n = new Notification
@@ -22,22 +22,45 @@ namespace backendLibraryManagement.Services
                 UserId = userId,
                 Message = message
             };
-            _db.Notifications.Add(n);
-            await  _db.SaveChangesAsync();
 
-            // Send email version of notification, if user has an email. 
-            var user = await _db.Users.FindAsync(userId);
-            if(user!= null && !string.IsNullOrWhiteSpace(user.Email))
+            _db.Notifications.Add(n);
+            await _db.SaveChangesAsync();
+
+            // Fetch user for delivery
+            var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return;
+
+            // Email (existing behavior)
+            if (!string.IsNullOrWhiteSpace(user.Email) && user.EmailOptIn)
             {
-                await _email.SendEmailAsync(
-                    to: user.Email,
-                    subject: "Library Notification",
-                    body: message
-                );
+                try
+                {
+                    await _email.SendEmailAsync(
+                        to: user.Email,
+                        subject: "Library Notification",
+                        body: message
+                    );
+                }
+                catch
+                {
+                    // Keep notification stored even if sending fails
+                }
+            }
+
+            // SMS (NEW)
+            if (user.SmsOptIn && !string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                try
+                {
+                    await _sms.SendSmsAsync(user.PhoneNumber.Trim(), message);
+                }
+                catch
+                {
+                    // ignore send error for now
+                }
             }
         }
 
-        // Returns all notifications for a user, newest first.
         public async Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
         {
             return await _db.Notifications
@@ -54,7 +77,6 @@ namespace backendLibraryManagement.Services
                 .ToListAsync();
         }
 
-        // Marks a notification as read.
         public async Task MarkAsReadAsync(int id)
         {
             var n = await _db.Notifications.FindAsync(id);
@@ -63,31 +85,26 @@ namespace backendLibraryManagement.Services
             await _db.SaveChangesAsync();
         }
 
-        // Scans for users with due loans within the next two days.
-        // Sends a reminder notification to each affected user.
         public async Task NotifyUpcomingDueDatesAsync()
         {
-            var now = DateTime.UtcNow;
-
-            var from = now;           // include today
-            var to = now.AddDays(2);  // include next 2 days
+            var fromDate = DateTime.UtcNow.Date;
+            var toDate = fromDate.AddDays(2);
 
             var loans = await _db.Loans
                 .Include(l => l.Book)
                 .Where(l => l.Status == "Aktiv" &&
-                            l.EndDate.Date >= from &&
-                            l.EndDate.Date <= to)
+                            l.EndDate.Date >= fromDate &&
+                            l.EndDate.Date <= toDate)
                 .ToListAsync();
 
             foreach (var loan in loans)
             {
                 var title = loan.Book?.Title ?? "a book";
-                var message = $"Reminder: your loan of '{title}' is due on {loan.EndDate:yyyy-MM-dd}. Please return or extend it.";
-                await CreateAsync(loan.UserId, message);
+                var msg = $"Reminder: your loan of '{title}' is due on {loan.EndDate:yyyy-MM-dd}. Please return or extend it.";
+                await CreateAsync(loan.UserId, msg);
             }
         }
 
-        // Updates an existing notification.
         public async Task<(bool Success, string? Error)> UpdateAsync(int id, UpdateNotificationDto dto)
         {
             var n = await _db.Notifications.FindAsync(id);
@@ -103,7 +120,6 @@ namespace backendLibraryManagement.Services
             return (true, null);
         }
 
-        // Deletes a notification.
         public async Task<bool> DeleteAsync(int id)
         {
             var n = await _db.Notifications.FindAsync(id);
@@ -113,6 +129,5 @@ namespace backendLibraryManagement.Services
             await _db.SaveChangesAsync();
             return true;
         }
-
     }
 }

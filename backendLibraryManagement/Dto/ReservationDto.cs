@@ -10,5 +10,6 @@
         public string? UserName { get; set; }
         public DateTime CreatedAt { get; set; } // The date the reservation was made.
         public string Status { get; set; } = ""; // Reservation state (Active / Cancelled / Fulfilled)
+        public DateTime? ExpiresAt { get; set; }
     }
 }

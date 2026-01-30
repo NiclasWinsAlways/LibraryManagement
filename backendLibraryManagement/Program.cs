@@ -13,9 +13,27 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register Reminder options + background worker
+// Register Reminder options
 builder.Services.Configure<ReminderOptions>(builder.Configuration.GetSection("Reminder"));
+builder.Services.Configure<FineOptions>(builder.Configuration.GetSection("Fines"));
+
+// background worker
 builder.Services.AddHostedService<DueReminderWorker>();
+builder.Services.AddHostedService<ReservationExpiryWorker>();
+builder.Services.AddHostedService<OverdueFineWorker>();
+
+// regiser all interface service
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IFineService, FineService>();
 
 // JWT config
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -69,8 +87,7 @@ builder.Services.AddCors(opt =>
     {
         policy.WithOrigins(
             "http://localhost:4200",
-            "http://192.168.0.208:4200",
-            "http://http://10.131.211.218:5196"
+            "http://10.0.13.3:5196"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -91,13 +108,6 @@ else
     builder.Services.AddDbContext<LibraryContext>(opt =>
         opt.UseInMemoryDatabase("LibraryDb"));
 }
-// regiser all interface service
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<ILoanService, LoanService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
 
 
 var app = builder.Build();
@@ -109,7 +119,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();

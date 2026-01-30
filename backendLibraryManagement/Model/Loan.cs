@@ -11,6 +11,8 @@
         public User? User { get; set; } // Navigation property to the user who borrowed the book.
         public DateTime StartDate { get; set; } = DateTime.UtcNow; // The date the loan was created.
         public DateTime EndDate { get; set; } // The mandatory return date.
+        public DateTime? ReturnedAt { get; set; } // The actual return date, null if not yet returned.
+        public int ExtendedCount { get; set; } = 0;// Number of times the loan has been extended.
         public string Status { get; set; } = "Aktiv"; // Current status of the loan:"Aktiv" (active), "Afleveret" (returned), "Forfalden" (overdue)
 
     }
